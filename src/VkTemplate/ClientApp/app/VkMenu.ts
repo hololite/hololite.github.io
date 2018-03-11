@@ -1,0 +1,74 @@
+import 'babylonjs'
+import 'babylonjs-gui'
+import { VkScene, VkApp } from './Vk'
+
+export class VkMenu {
+	private readonly    _vkScene:           VkScene;
+    private             _menuOptionPlane:   BABYLON.Mesh = null;
+    private             _enableMenu:        boolean = false;
+    private             _position:          BABYLON.Vector3;
+
+    private get scene(): BABYLON.Scene {
+        return VkApp.instance.scene;
+    }
+
+	public constructor(scene: VkScene, position?: BABYLON.Vector3) {
+        this._vkScene = scene;
+        if (position === undefined) {
+            this._position = new BABYLON.Vector3(30, 20, 0);
+        }
+        else {
+            this._position = position;
+        }
+    }
+
+    public createAssets(): void {
+        // UI planes
+        this._menuOptionPlane = BABYLON.Mesh.CreatePlane("plane", 20, this.scene);
+        this._menuOptionPlane.position = this._position;
+        let optionTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this._menuOptionPlane);
+        let optionPanel = new BABYLON.GUI.StackPanel();
+        optionPanel.top = "100px";
+        optionTexture.addControl(optionPanel);
+
+        let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Change Scene");
+        //button1.width = 1;
+        button1.height = "100px";
+        button1.width = "500px";
+        button1.color = "white";
+        button1.fontSize = 50;
+        button1.background = "gray";
+        button1.onPointerDownObservable.add(() => {
+            //this.vrHelper.displayGaze = !this.vrHelper.displayGaze;
+            /*
+            if (this.scene.debugLayer.isVisible()) {
+                this.scene.debugLayer.hide();
+            }
+            else {
+                this.scene.debugLayer.show();
+            }
+            */
+            this._vkScene.stop();
+        });
+        optionPanel.addControl(button1);
+    }
+
+    private enableMenu(enable: boolean) {
+        this._menuOptionPlane.isVisible = enable;
+        this._enableMenu = enable;
+
+        if (enable) {
+            VkApp.instance.showLaserPointer();
+        }
+    }
+
+    public handleMenuButton(controller: BABYLON.WebVRController, pressed: boolean) {
+        if (pressed) {
+            this.enableMenu(!this._enableMenu);
+        }
+    }
+
+    public start(): void {
+        this.enableMenu(false);
+    }
+}
