@@ -7,7 +7,7 @@
   "apps": [
     {
       "root": "ClientApp",
-      "outDir": "wwwroot",
+      "outDir": "wwwroot/VkTemplate",
       "assets": [
         "assets"
       ],
