@@ -231,6 +231,10 @@ export class VkApp {
                 console.log('<<<< onControllerMeshLoadedObservable');
             });
 
+            window.addEventListener('vrdisplayactivate', () => {
+                this._vrHelper.enterVR();
+            });
+
             // key-based navigation
             // this should work in both pre-vr mode and vr mode
             document.onkeydown = (e)=> {

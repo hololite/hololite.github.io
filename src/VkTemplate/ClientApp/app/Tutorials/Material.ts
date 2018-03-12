@@ -9,7 +9,7 @@ import { VkScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
 export class MaterialScene extends VkScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(0, 60, 0));
+    //private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(0, 60, 0));
 
     constructor() {
         super({
@@ -18,9 +18,11 @@ export class MaterialScene extends VkScene {
         });
     }
 
+    /*
     protected onMenuButton(controller: BABYLON.WebVRController, pressed: boolean) {
         this.menu.handleMenuButton(controller, pressed);
     }
+    */
 
     protected createAssets(): void {
         let light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), this.scene);
@@ -50,11 +52,11 @@ export class MaterialScene extends VkScene {
         water.addToRenderList(skybox);
         waterMesh.material = water;
 
-        this.menu.createAssets();
+        //this.menu.createAssets();
     }
 
     protected onStart(): void {
-        this.menu.start();
+        //this.menu.start();
     }
 }
 
