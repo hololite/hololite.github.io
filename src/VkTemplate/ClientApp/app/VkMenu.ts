@@ -33,10 +33,10 @@ export class VkMenu {
 
         let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Change Scene");
         //button1.width = 1;
-        button1.height = "100px";
-        button1.width = "500px";
+        button1.height = "40px";
+        button1.width = "160px";
         button1.color = "white";
-        button1.fontSize = 50;
+        button1.fontSize = 12;
         button1.background = "gray";
         button1.onPointerDownObservable.add(() => {
             //this.vrHelper.displayGaze = !this.vrHelper.displayGaze;
@@ -70,5 +70,26 @@ export class VkMenu {
 
     public start(): void {
         this.enableMenu(false);
+
+        this.scene.onBeforeRenderObservable.add(()=>{
+            /*
+            // Left and right hand position/rotation
+            if (this.vrHelper.webVRCamera.leftController) {
+                this.leftHand.position = this.vrHelper.webVRCamera.leftController.devicePosition.clone()
+                this.leftHand.rotationQuaternion = this.vrHelper.webVRCamera.leftController.deviceRotationQuaternion.clone()
+            }
+
+            if (this.vrHelper.webVRCamera.rightController) {
+                this.rightHand.position = this.vrHelper.webVRCamera.rightController.devicePosition.clone()
+                this.rightHand.rotationQuaternion = this.vrHelper.webVRCamera.rightController.deviceRotationQuaternion.clone()
+            }
+            */
+
+            // Head position/rotation
+            this._menuOptionPlane.position = VkApp.instance.vrHelper.webVRCamera.devicePosition.clone()
+            this._menuOptionPlane.position.z += 10;
+            this._menuOptionPlane.position.y += 3;
+            this._menuOptionPlane.rotationQuaternion = VkApp.instance.vrHelper.webVRCamera.deviceRotationQuaternion.clone()
+        })
     }
 }

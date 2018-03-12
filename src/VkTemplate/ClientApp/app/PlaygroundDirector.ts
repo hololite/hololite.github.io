@@ -78,7 +78,7 @@ export class PlaygroundDirector implements IVkDirector {
             this._nextScene = this.motorScene;
         }
         else if (this._currentScene instanceof MotorScene) {
-            this._nextScene = this.cornellScene;
+            this._nextScene = this.meshLoaderScene;
         }
         else if (this._currentScene instanceof CornellScene) {
             this._nextScene = this.meshLoaderScene;
@@ -99,7 +99,7 @@ export class PlaygroundDirector implements IVkDirector {
             this._nextScene = this.vls2Scene;
         }
         else if (this._currentScene instanceof VLS2Scene) {
-            this._nextScene = this.polyhedraScene;
+            this._nextScene = this.spsScene;
         }
         else if (this._currentScene instanceof RefractionScene) {
             this._nextScene = this.refraction2Scene;
@@ -114,7 +114,7 @@ export class PlaygroundDirector implements IVkDirector {
             this._nextScene = this.spsScene;
         }
         else if (this._currentScene instanceof SPSScene) {
-            this._nextScene = this.material2Scene;
+            this._nextScene = this.materialScene;
         }
         else if (this._currentScene instanceof Material2Scene) {
             this._nextScene = this.materialScene;

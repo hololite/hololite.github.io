@@ -7,7 +7,7 @@
   "keywords": [],
   "scripts": {
     "ng": "ng",
-    "start": "ng serve -o --host 0.0.0.0",
+    "start": "ng serve -o --host 0.0.0.0 --base-href \"/VkTemplate/\"",
     "build": "ng build",
     "build-prod": "ng build --prod",
     "build-watch": "ng build --watch",
