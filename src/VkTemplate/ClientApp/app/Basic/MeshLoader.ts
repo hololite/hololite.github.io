@@ -11,7 +11,7 @@ import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
 export class MeshLoaderScene extends FirstScene implements EventListenerObject {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(10, 10, 15));
+    private menu: VkMenu = new VkMenu(this);
     private decals: BABYLON.Mesh[] = [];
     private decalMaterial: BABYLON.StandardMaterial;
     private meshes: BABYLON.AbstractMesh[] = null;
@@ -46,7 +46,7 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
     private createSound(): void {
         this.sound3D = new BABYLON.Sound("Sound3D", "assets/dreamer.mp3", this.scene, () => {
             
-        }, { loop: true, autoplay: true, volume: 0.5, spatialSound: true, distanceModel: "linear" });
+        }, { loop: true, autoplay: true, volume: 0.3, spatialSound: true, distanceModel: "linear" });
         
         // Set 3D sound's position
         this.sound3D.setPosition(new BABYLON.Vector3(3, 1, 3));
@@ -57,8 +57,13 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
 
     private deleteSound(): void {
         if (this.sound3D) {
+            this.sound3D.stop();
             this.sound3D.dispose();
             this.sound3D = null;
+            console.log('sound deleted');
+        }
+        else {
+            console.log('no sound');
         }
     }
 

@@ -11,7 +11,7 @@ import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
 export class TerrainScene extends FirstScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(10, 10, 15));
+    private menu: VkMenu = new VkMenu(this);
 
     /*
     * Public members

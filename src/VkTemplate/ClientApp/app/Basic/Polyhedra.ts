@@ -23,7 +23,7 @@ export class PolyhedraScene extends FirstScene {
     private sphere2f: BABYLON.Mesh;
     private sphere3f: BABYLON.Mesh;
     private sphere4f: BABYLON.Mesh;
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(10, 3, 0));
+    private menu: VkMenu = new VkMenu(this);
         
     constructor() {
         super({

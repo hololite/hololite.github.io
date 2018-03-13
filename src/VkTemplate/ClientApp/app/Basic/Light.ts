@@ -9,7 +9,7 @@ import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
 export class LightScene extends VkScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(5, 10, 0));
+    private menu: VkMenu = new VkMenu(this);
     private light: BABYLON.Light;
 
     constructor() {
@@ -129,7 +129,7 @@ export class LightScene extends VkScene {
 }
 
 export class ShadowScene extends VkScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(5, 10, 0));
+    private menu: VkMenu = new VkMenu(this);
     private light: BABYLON.Light;
 
     constructor() {

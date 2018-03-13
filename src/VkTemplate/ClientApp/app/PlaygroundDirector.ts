@@ -120,7 +120,7 @@ export class PlaygroundDirector implements IVkDirector {
             this._nextScene = this.materialScene;
         }
         else if (this._currentScene instanceof MaterialScene) {
-            this._nextScene = this.bmScene;
+            this._nextScene = this.video360Scene;
         }
         else if (this._currentScene instanceof BasicMaterialScene) {
             this._nextScene = this.animationScene;
@@ -216,6 +216,6 @@ export class PlaygroundDirector implements IVkDirector {
         this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
-        this.setFirstScene(this.video360Scene);
+        this.setFirstScene(this.motorScene);
     }
 }

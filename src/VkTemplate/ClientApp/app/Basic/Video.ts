@@ -11,7 +11,7 @@ import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
 export class Video360Scene extends FirstScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(0, 10, 10));
+    private menu: VkMenu = new VkMenu(this);
     private dome: BABYLON.VideoDome = null;
 
     /*
@@ -37,11 +37,11 @@ export class Video360Scene extends FirstScene {
 
     protected onStart(): void {
         this.dome = new BABYLON.VideoDome(
-            "testdome",
+            "Fish",
             //["https://yoda.blob.core.windows.net/videos/uptale360.mp4"],
-            ["assets/360/PebbleBeach.mp4"],
+            ["assets/360/boxfish.mp4"],
             {
-                resolution: 16
+                resolution: 32
             },
             this.scene
         );

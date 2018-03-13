@@ -232,6 +232,7 @@ export class VkApp {
             });
 
             window.addEventListener('vrdisplayactivate', () => {
+                console.log('>>>> onvrdisplayactivate');
                 this._vrHelper.enterVR();
             });
 

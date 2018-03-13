@@ -14,7 +14,7 @@ import { VkMenu } from '../VkMenu'
 //
 
 export class VLSScene extends FirstScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(20, 10, 0));
+    private menu: VkMenu = new VkMenu(this);
     private rad1: BABYLON.Mesh;
     private newMesh: BABYLON.Mesh;
         
@@ -290,7 +290,7 @@ export class VLSScene extends FirstScene {
 export class VLS2Scene extends FirstScene {
     private alpha = 1;
     private mesh: BABYLON.Mesh;
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(10, 10, 0));
+    private menu: VkMenu = new VkMenu(this);
 
     constructor() {
         super({

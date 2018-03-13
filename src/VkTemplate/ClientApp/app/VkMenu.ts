@@ -6,32 +6,28 @@ export class VkMenu {
 	private readonly    _vkScene:           VkScene;
     private             _menuOptionPlane:   BABYLON.Mesh = null;
     private             _enableMenu:        boolean = false;
-    private             _position:          BABYLON.Vector3;
+    private             _text:              string = "Next Scene";
 
     private get scene(): BABYLON.Scene {
         return VkApp.instance.scene;
     }
 
-	public constructor(scene: VkScene, position?: BABYLON.Vector3) {
+	public constructor(scene: VkScene, text?: string) {
         this._vkScene = scene;
-        if (position === undefined) {
-            this._position = new BABYLON.Vector3(30, 20, 0);
-        }
-        else {
-            this._position = position;
+        if (text !== undefined) {
+            this._text = text;
         }
     }
 
     public createAssets(): void {
         // UI planes
         this._menuOptionPlane = BABYLON.Mesh.CreatePlane("plane", 20, this.scene);
-        this._menuOptionPlane.position = this._position;
         let optionTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(this._menuOptionPlane);
         let optionPanel = new BABYLON.GUI.StackPanel();
         optionPanel.top = "100px";
         optionTexture.addControl(optionPanel);
 
-        let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Change Scene");
+        let button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", this._text);
         //button1.width = 1;
         button1.height = "40px";
         button1.width = "160px";
@@ -72,24 +68,14 @@ export class VkMenu {
         this.enableMenu(false);
 
         this.scene.onBeforeRenderObservable.add(()=>{
-            /*
-            // Left and right hand position/rotation
-            if (this.vrHelper.webVRCamera.leftController) {
-                this.leftHand.position = this.vrHelper.webVRCamera.leftController.devicePosition.clone()
-                this.leftHand.rotationQuaternion = this.vrHelper.webVRCamera.leftController.deviceRotationQuaternion.clone()
-            }
-
-            if (this.vrHelper.webVRCamera.rightController) {
-                this.rightHand.position = this.vrHelper.webVRCamera.rightController.devicePosition.clone()
-                this.rightHand.rotationQuaternion = this.vrHelper.webVRCamera.rightController.deviceRotationQuaternion.clone()
-            }
-            */
-
             // Head position/rotation
-            this._menuOptionPlane.position = VkApp.instance.vrHelper.webVRCamera.devicePosition.clone()
-            this._menuOptionPlane.position.z += 10;
-            this._menuOptionPlane.position.y += 3;
-            this._menuOptionPlane.rotationQuaternion = VkApp.instance.vrHelper.webVRCamera.deviceRotationQuaternion.clone()
+            if (this.enableMenu) {
+                this._menuOptionPlane.position = VkApp.instance.vrHelper.webVRCamera.devicePosition.clone()
+                this._menuOptionPlane.position.z += 10;
+                this._menuOptionPlane.position.y += 3;
+                this._menuOptionPlane.rotationQuaternion = VkApp.instance.vrHelper.webVRCamera.deviceRotationQuaternion.clone()
+            }
         })
+
     }
 }

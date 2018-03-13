@@ -11,7 +11,7 @@ import { VkMenu } from '../VkMenu'
 export class FrameScene extends VkScene {
     private light: BABYLON.HemisphericLight;
     private frame: BABYLON.Mesh;
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(20, 3, -20));
+    private menu: VkMenu = new VkMenu(this);
         
     constructor() {
         super({

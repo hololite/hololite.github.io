@@ -9,7 +9,7 @@ import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
 export class BlendModeScene extends VkScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(0, 10, -40));
+    private menu: VkMenu = new VkMenu(this);
         
     constructor() {
         super({
