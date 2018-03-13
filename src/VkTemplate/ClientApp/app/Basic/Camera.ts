@@ -9,7 +9,7 @@ import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
 export class CameraScene extends VkScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(0, 10, -40));
+    private menu: VkMenu = new VkMenu(this);
     private light: BABYLON.DirectionalLight;
     private meshes: BABYLON.AbstractMesh[] = null;
     constructor() {
@@ -78,7 +78,7 @@ export class CameraScene extends VkScene {
 
 
 export class VRCamAndController6DOFScene extends VkScene {
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(0, 10, 10));
+    private menu: VkMenu = new VkMenu(this);
     private light: BABYLON.DirectionalLight;
     private meshes: BABYLON.AbstractMesh[] = null;
     private leftHand: BABYLON.Mesh;         // its position follows the 6DOF of left controller

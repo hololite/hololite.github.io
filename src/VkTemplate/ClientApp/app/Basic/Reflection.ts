@@ -12,7 +12,7 @@ export class ReflectionScene extends FirstScene {
     private yellowSphere: BABYLON.Mesh;
     private blueSphere: BABYLON.Mesh;
     private greenSphere: BABYLON.Mesh;
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(10, 3, 0));
+    private menu: VkMenu = new VkMenu(this);
         
     private static readonly floorName = "My Floor";
 
@@ -135,7 +135,7 @@ export class RefractionScene extends FirstScene {
     private yellowSphere: BABYLON.Mesh;
     private blueSphere: BABYLON.Mesh;
     private greenSphere: BABYLON.Mesh;
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(10, 3, 0));
+    private menu: VkMenu = new VkMenu(this);
         
     private static readonly floorName = "My Floor";
 
@@ -223,7 +223,7 @@ export class Refraction2Scene extends FirstScene {
     private IoR = 0.1;
     private theta = 0;
     private waterMaterial: BABYLON.StandardMaterial;
-    private menu: VkMenu = new VkMenu(this, new BABYLON.Vector3(10, 3, 0));
+    private menu: VkMenu = new VkMenu(this);
         
     constructor() {
         super({
