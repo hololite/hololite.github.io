@@ -204,9 +204,9 @@ export class PlaygroundDirector implements IVkDirector {
             */
         //this.fileLoaderScene.initialize();
         this.fileLoaderScene2 = new FileLoaderScene(
-            "assets/gltf/2stories/",
-            "scene.gltf",
-            new BABYLON.Vector3(0, 10, -30),
+            "assets/scenes/babylonjs/city/",
+            "HugeCity.babylon",
+            new BABYLON.Vector3(0, 200, -50),
             new BABYLON.Vector3(0, 5, 0));
         //this.fileLoaderScene2.initialize();
         this.vr6DOFScene = new VRCamAndController6DOFScene();
@@ -216,6 +216,6 @@ export class PlaygroundDirector implements IVkDirector {
         this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
-        this.setFirstScene(this.motorScene);
+        this.setFirstScene(this.fileLoaderScene2);
     }
 }
