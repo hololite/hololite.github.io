@@ -10,6 +10,37 @@ import { Common } from '../Common'
 import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
+export interface IMeshLoaderOptions {
+    rotate?:        boolean;
+    defaultEnv:     boolean;
+    soundFile?:     string;
+    envDdsFile?:    string;
+    scale?:         number;
+}
+
+class MeshLoaderOptions implements IMeshLoaderOptions {
+    constructor(args?: IMeshLoaderOptions) {
+        if (args !== undefined) {
+            if (args.rotate !== undefined)
+                this.rotate = args.rotate;
+            if (args.defaultEnv !== undefined)
+                this.defaultEnv = args.defaultEnv;
+            if (args.soundFile !== undefined)
+                this.soundFile = args.soundFile;
+            if (args.envDdsFile !== undefined)
+                this.envDdsFile = args.envDdsFile;
+            if (args.scale !== undefined)
+                this.scale = args.scale;
+        }
+    }
+
+    rotate:         boolean = false;
+    defaultEnv:     boolean = true;
+    soundFile:      string = "";
+    envDdsFile:     string = "";
+    scale:          number = 1;
+}
+
 export class MeshLoaderScene extends FirstScene implements EventListenerObject {
     private menu: VkMenu = new VkMenu(this);
     private decals: BABYLON.Mesh[] = [];
@@ -17,26 +48,23 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
     private meshes: BABYLON.AbstractMesh[] = null;
     private path: string;
     private file: string;
-    private scale: number;
-    private rotate: boolean;
     private skyBox: BABYLON.Mesh = null;
     private sound3D: BABYLON.Sound = null;
+
+    private loaderOptions: MeshLoaderOptions = null;
 
     /*
     * Public members
     */
-    constructor(path: string, file: string, position: BABYLON.Vector3, target: BABYLON.Vector3, rotate?: boolean, scale?: number) {
+    constructor(path: string, file: string, position: BABYLON.Vector3, target: BABYLON.Vector3, options?: IMeshLoaderOptions) {
         super({
-            //cameraInitialTarget: new BABYLON.Vector3(0, 2, 2),
-            //cameraInitialPosition: new BABYLON.Vector3(0, 2, 1)
             cameraInitialPosition: position,
             cameraInitialTarget: target
         });
 
         this.path = path;
         this.file = file;
-        this.scale = scale;
-        this.rotate = rotate;
+        this.loaderOptions = new MeshLoaderOptions(options);
     }
 
     protected onMenuButton(controller: BABYLON.WebVRController, pressed: boolean) {
@@ -44,15 +72,24 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
     }
 
     private createSound(): void {
-        this.sound3D = new BABYLON.Sound("Sound3D", "assets/dreamer.mp3", this.scene, () => {
-            
-        }, { loop: true, autoplay: true, volume: 0.3, spatialSound: true, distanceModel: "linear" });
-        
-        // Set 3D sound's position
-        this.sound3D.setPosition(new BABYLON.Vector3(3, 1, 3));
-        
-        // Set 3D sound's max distance (linear model)
-        this.sound3D.maxDistance = 5;
+        console.log(`**** soundFile=${this.loaderOptions.soundFile}`);
+        if (this.loaderOptions.soundFile !== "") {
+            this.sound3D = new BABYLON.Sound(
+                "Sound3D",
+                this.loaderOptions.soundFile,
+                this.scene,
+                () => {},
+                {
+                    loop: true, autoplay: true, volume: 0.3, spatialSound: true, distanceModel: "linear"
+                }
+            );
+
+            // Set 3D sound's position
+            this.sound3D.setPosition(new BABYLON.Vector3(3, 1, 3));
+
+            // Set 3D sound's max distance (linear model)
+            this.sound3D.maxDistance = 5;
+        }
     }
 
     private deleteSound(): void {
@@ -100,6 +137,7 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
     
     protected createAssets(): void {
         let light = new BABYLON.HemisphericLight("Hemi", new BABYLON.Vector3(0, 1, 0), this.scene);
+        light.intensity = 2;
 
         this.decalMaterial = new BABYLON.StandardMaterial("decalMat", this.scene);
         this.decalMaterial.diffuseTexture = new BABYLON.Texture("assets/textures/impact.png", this.scene);
@@ -127,18 +165,20 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
         this.scene.clearColor = black4;
         */
 
-        // Create basic scene
-        /*
-        let helper = this.scene.createDefaultEnvironment({
-            enableGroundMirror: true,
-            groundShadowLevel: 0.6
-        });       
-        helper.setMainColor(BABYLON.Color3.Teal());
-        */
-        let hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("assets/textures/environment.dds", this.scene);
-        this.skyBox = this.scene.createDefaultSkybox(hdrTexture, true);
+        if (this.loaderOptions.envDdsFile !== "") {
+            let hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("assets/textures/environment.dds", this.scene);
+            this.skyBox = this.scene.createDefaultSkybox(hdrTexture, true);
+        }
+        else if (this.loaderOptions.defaultEnv) {
+            // basic scene
+            let helper = this.scene.createDefaultEnvironment({
+                enableGroundMirror: true,
+                groundShadowLevel: 0.6
+            });       
+            helper.setMainColor(BABYLON.Color3.Teal());
+        }
 
-        if (this.rotate) {
+        if (this.loaderOptions.rotate) {
             this.beforeRenderCallback = () => {
                 if (this.meshes) {
                     this.meshes[0].rotation.y += 0.005;
@@ -150,8 +190,20 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
         BABYLON.SceneLoader.ImportMesh("", this.path, this.file, this.scene, (newMeshes) => {
             this.meshes = newMeshes;
 
-            if (this.scale !== undefined) {
-                this.meshes[0].scaling.scaleInPlace(this.scale);
+            for (let m of this.meshes) {
+                if (m.name.startsWith("Street") || m.name.startsWith("Concrete")) {
+                    // add to teleport mesh
+                    console.log(`teleport mesh: name=${m.name}`);
+                    m.isPickable = true;
+                    this.teleportMeshes.push(<BABYLON.Mesh>m);
+                }
+                else {
+                    console.log(`mesh: name=${m.name}`);
+                }
+            }
+
+            if (this.loaderOptions.scale !== 1) {
+                this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
             }
         });
 

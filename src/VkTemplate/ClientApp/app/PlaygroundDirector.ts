@@ -15,7 +15,7 @@ import { ReflectionScene, RefractionScene, Refraction2Scene } from './Basic/Refl
 import { PolyhedraScene } from './Basic/Polyhedra';
 import { VLSScene, VLS2Scene } from './Basic/VLS';
 import { BlendModeScene } from './Basic/BlendMode';
-import { MeshLoaderScene } from './Basic/MeshLoader';
+import { MeshLoaderScene, IMeshLoaderOptions } from './Basic/MeshLoader';
 import { CameraScene, VRCamAndController6DOFScene } from './Basic/Camera';
 import { FrameScene } from './Basic/Frame';
 import { TerrainScene } from './Basic/Terrain';
@@ -167,27 +167,52 @@ export class PlaygroundDirector implements IVkDirector {
         //this.vlsScene.initialize();
         this.vls2Scene = new VLS2Scene();
         //this.vls2Scene.initialize();
+
+        /*
         this.meshLoaderScene = new MeshLoaderScene(
-            /*
+            "assets/gltf/bellydance/",
+            "scene.gltf",
+            new BABYLON.Vector3(0, 10, -20),
+            new BABYLON.Vector3(0, 5, 0),
+            {
+                envDdsFile: "assets/textures/environment.dds",
+                soundFile: "assets/dreamer.mp3"
+            }
+        );
+        */
+        /*
+        this.meshLoaderScene = new MeshLoaderScene(
             "assets/gltf/car1/",
             "car1.glb",
             new BABYLON.Vector3(0, 1, -3),
             new BABYLON.Vector3(0, 1, 0),
-            true,
-            2.5
-            */
-            /*
+            {
+                rotate: true,
+                scale: 3
+            }
+        );
+        */
+        /*
+        this.meshLoaderScene = new MeshLoaderScene(
             "https://www.babylonjs.com/Assets/DamagedHelmet/glTF/",
             "DamagedHelmet.gltf",
-            new BABYLON.Vector3(0, 0, -2),
+            new BABYLON.Vector3(0, 0, -3),
             new BABYLON.Vector3(0, 0, 0),
-            true
-            */
-            "assets/gltf/bellydance/",
-            "scene.gltf",
-            new BABYLON.Vector3(0, 10, -20),
-            new BABYLON.Vector3(0, 5, 0)
+            {
+                rotate: true
+            }
         );
+        */
+        this.meshLoaderScene = new MeshLoaderScene(
+            "assets/scenes/babylonjs/city/",
+            "HugeCity.babylon",
+            new BABYLON.Vector3(0, 40, 0),
+            new BABYLON.Vector3(0, 0, 10),
+            {
+                defaultEnv: false
+            }
+        );
+
         //this.meshLoaderScene.initialize();
         this.blendModeScene = new BlendModeScene();
         //this.blendModeScene.initialize();
@@ -216,6 +241,6 @@ export class PlaygroundDirector implements IVkDirector {
         this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
-        this.setFirstScene(this.fileLoaderScene2);
+        this.setFirstScene(this.meshLoaderScene);
     }
 }
