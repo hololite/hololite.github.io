@@ -11,7 +11,7 @@ import { Common } from '../Common'
 import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
-export interface IMeshLoaderOptions {
+export interface ICityExplorerOptions {
     rotate?:        boolean;
     defaultEnv:     boolean;
     soundFile?:     string;
@@ -19,8 +19,8 @@ export interface IMeshLoaderOptions {
     scale?:         number;
 }
 
-class MeshLoaderOptions implements IMeshLoaderOptions {
-    constructor(args?: IMeshLoaderOptions) {
+class CityExplorerOptions implements ICityExplorerOptions {
+    constructor(args?: ICityExplorerOptions) {
         if (args !== undefined) {
             if (args.rotate !== undefined)
                 this.rotate = args.rotate;
@@ -42,7 +42,7 @@ class MeshLoaderOptions implements IMeshLoaderOptions {
     scale:          number = 1;
 }
 
-export class MeshLoaderScene extends FirstScene implements EventListenerObject {
+export class CityExplorerScene extends FirstScene implements EventListenerObject {
     private menu: VkMenu = new VkMenu(this);
     private decals: BABYLON.Mesh[] = [];
     private decalMaterial: BABYLON.StandardMaterial;
@@ -52,12 +52,12 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
     private skyBox: BABYLON.Mesh = null;
     private sound3D: BABYLON.Sound = null;
 
-    private loaderOptions: MeshLoaderOptions = null;
+    private loaderOptions: CityExplorerOptions = null;
 
     /*
     * Public members
     */
-    constructor(path: string, file: string, position: BABYLON.Vector3, target: BABYLON.Vector3, options?: IMeshLoaderOptions) {
+    constructor(path: string, file: string, position: BABYLON.Vector3, target: BABYLON.Vector3, options?: ICityExplorerOptions) {
         super({
             cameraInitialPosition: position,
             cameraInitialTarget: target
@@ -65,7 +65,7 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
 
         this.path = path;
         this.file = file;
-        this.loaderOptions = new MeshLoaderOptions(options);
+        this.loaderOptions = new CityExplorerOptions(options);
     }
 
     protected onMenuButton(controller: BABYLON.WebVRController, pressed: boolean) {

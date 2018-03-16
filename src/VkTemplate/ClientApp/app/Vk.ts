@@ -429,7 +429,6 @@ export abstract class VkScene {
     protected get vrHelper(): BABYLON.VRExperienceHelper { return VkApp.instance.vrHelper; }
     protected get preRender(): ()=>void { return this._preRender; }
     protected set preRender(value: ()=>void) { this._preRender = value; }
-    protected get teleportMeshes(): BABYLON.Mesh[] { return this._teleportMeshes; }
     protected get camera(): BABYLON.Camera { return VkApp.instance.camera; }
 
     protected set beforeRenderCallback(value: () => void) {
@@ -438,6 +437,11 @@ export abstract class VkScene {
             console.log('_beforeRenderCallback is set');
             this._beforeRenderObserver = this.scene.onBeforeRenderObservable.add(this._beforeRenderCallback);
         }
+    }
+
+    protected addTeleportMesh(mesh: BABYLON.Mesh): void {
+        this.vrHelper.addFloorMesh(mesh);
+        this._teleportMeshes.push(mesh);
     }
 
     protected isVREnabled(): boolean { return VkApp.instance.isVREnabled(); }
@@ -462,16 +466,16 @@ export abstract class VkScene {
     protected onTouchpadButton(nav: TouchpadNav): void {
         switch (nav) {
             case TouchpadNav.Top:
-                this.vrHelper.currentVRCamera.position.z += 0.6; 
+                this.vrHelper.currentVRCamera.position.z += 2; 
                 break;
             case TouchpadNav.Bottom:
-                this.vrHelper.currentVRCamera.position.z -= 0.6; 
+                this.vrHelper.currentVRCamera.position.z -= 2; 
                 break;
             case TouchpadNav.Right:
-                this.vrHelper.currentVRCamera.position.y += 0.5;
+                this.vrHelper.currentVRCamera.position.y += 2;
                 break;
             case TouchpadNav.Left:
-                this.vrHelper.currentVRCamera.position.y -= 0.5;
+                this.vrHelper.currentVRCamera.position.y -= 2;
                 break;
         }
     }
@@ -569,9 +573,6 @@ export abstract class VkScene {
             //this.vrHelper.changeLaserColor(BABYLON.Color3.Yellow());
             this.vrHelper.displayLaserPointer = true;
             //this.vrHelper.webVROptions.defaultHeight = 2;
-
-            for (let mesh of this._teleportMeshes)
-                this.vrHelper.addFloorMesh(mesh);
 
             /*
             this.vrHelper.onEnteringVR.add(() => {
@@ -716,10 +717,11 @@ export abstract class VkScene {
         }
         this._beforeRenderCallback = null;
 
-        if (this.isVREnabled()) {
+        if (this._teleportMeshes.length) {
             for (let mesh of this._teleportMeshes) {
                 this.vrHelper.removeFloorMesh(mesh);
             }
+            this._teleportMeshes.length = 0;
         }
 
         this.unloadAssetsFromScene();

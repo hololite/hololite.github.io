@@ -100,7 +100,7 @@ export class LightScene extends VkScene {
         cube2.receiveShadows = true;     // render shadow on this mesh
 
         let ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 4, height: 4}, this.scene);		
-        this.teleportMeshes.push(ground);
+        this.addTeleportMesh(ground);
         ground.receiveShadows = true;   // render shadow on this mesh
         console.log(`ground.receiveShadows=${ground.receiveShadows}`);
 
@@ -156,7 +156,7 @@ export class ShadowScene extends VkScene {
 
         // Ground
         let ground = BABYLON.Mesh.CreateGroundFromHeightMap("ground", "assets/textures/heightMap.png", 100, 100, 100, 0, 10, this.scene, false);
-        this.teleportMeshes.push(ground);
+        this.addTeleportMesh(ground);
         let groundMaterial = new BABYLON.StandardMaterial("ground", this.scene);
         let texture = new BABYLON.Texture("assets/textures/ground.jpg", this.scene);
         texture.uScale = 6;

@@ -17,6 +17,7 @@
       "babylonjs",
       "babylonjs-loaders",
       "babylonjs-serializers",
+      "babylonjs-inspector",
       "babylonjs-gui",
       "babylonjs-procedural-textures",
       "babylonjs-post-process",

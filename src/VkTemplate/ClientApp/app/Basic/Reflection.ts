@@ -71,7 +71,7 @@ export class ReflectionScene extends FirstScene {
         
         // Mirror
         let mirror = BABYLON.Mesh.CreateBox("Mirror", 1.0, this.scene);
-        this.teleportMeshes.push(mirror);
+        this.addTeleportMesh(mirror);
         mirror.scaling = new BABYLON.Vector3(100.0, 0.01, 100.0);
 
         let sm = new BABYLON.StandardMaterial("mirror", this.scene);

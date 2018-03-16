@@ -270,7 +270,7 @@ export class AnimationScene extends VkScene {
         
         // Meshes
         this._plane = BABYLON.Mesh.CreateGround(AnimationScene.floorName, 100, 100, 2, this.scene);
-        this.teleportMeshes.push(this._plane);
+        this.addTeleportMesh(this._plane);
         this._plane.material = planeMaterial;
         
         this._box = BABYLON.Mesh.CreateBox("box", 5, this.scene);

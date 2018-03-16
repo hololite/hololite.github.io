@@ -71,7 +71,7 @@ export class MotorScene extends FirstScene {
 
         // grounds
         this.ground1 = BABYLON.MeshBuilder.CreateGround(MotorScene.floorName, { width: 50, height: 50 }, this.scene);
-        this.teleportMeshes.push(this.ground1);
+        this.addTeleportMesh(this.ground1);
         this.ground1.position.y = -3.1;
         this.ground1.position.x = 25;
         this.ground1.position.z = 25;
@@ -79,7 +79,7 @@ export class MotorScene extends FirstScene {
         this.ground1.rotation.x = -0.1;
 
         this.ground2 = BABYLON.MeshBuilder.CreateGround(MotorScene.floorName, { width: 50, height: 50 }, this.scene);
-        this.teleportMeshes.push(this.ground2);
+        this.addTeleportMesh(this.ground2);
         this.ground2.position.y = -3.1;
         this.ground2.position.x = -25;
         this.ground2.position.z = 25;
@@ -87,7 +87,7 @@ export class MotorScene extends FirstScene {
         this.ground2.rotation.x = -0.1;
 
         this.ground3 = BABYLON.MeshBuilder.CreateGround(MotorScene.floorName, { width: 50, height: 50 }, this.scene);
-        this.teleportMeshes.push(this.ground3);
+        this.addTeleportMesh(this.ground3);
         this.ground3.position.y = -3.1;
         this.ground3.position.x = 25;
         this.ground3.position.z = -25;
@@ -95,7 +95,7 @@ export class MotorScene extends FirstScene {
         this.ground3.rotation.x = 0.1;
 
         this.ground4 = BABYLON.MeshBuilder.CreateGround(MotorScene.floorName, { width: 50, height: 50 }, this.scene);
-        this.teleportMeshes.push(this.ground4);
+        this.addTeleportMesh(this.ground4);
         this.ground4.position.y = -3.1;
         this.ground4.position.x = -25;
         this.ground4.position.z = -25;

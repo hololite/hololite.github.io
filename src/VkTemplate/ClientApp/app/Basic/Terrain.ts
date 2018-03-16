@@ -64,7 +64,7 @@ export class TerrainScene extends FirstScene {
         ground.position.y = -2.05;
         ground.material = terrainMaterial;
 
-        this.teleportMeshes.push(ground);
+        this.addTeleportMesh(ground);
 
         this.menu.createAssets();
     }

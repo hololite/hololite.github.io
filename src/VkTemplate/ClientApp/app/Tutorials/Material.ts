@@ -87,7 +87,7 @@ export class Material2Scene extends VkScene {
     
         // Ground
         let ground = BABYLON.Mesh.CreateGroundFromHeightMap("ground", "assets/textures/heightMap.png", 100, 100, 100, 0, 10, this.scene, false);
-        this.teleportMeshes.push(ground);
+        this.addTeleportMesh(ground);
         let groundMaterial = new BABYLON.StandardMaterial("ground", this.scene);
         let texture = new BABYLON.Texture("assets/textures/ground.jpg", this.scene);
         texture.uScale = 6;

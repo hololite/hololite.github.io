@@ -235,7 +235,7 @@ export class VLSScene extends FirstScene {
     // ------------------------------------------------------------------------------
         // ground
         let grd = BABYLON.Mesh.CreateGround("grd", 50, 50, 1, this.scene);
-        this.teleportMeshes.push(grd);
+        this.addTeleportMesh(grd);
         // let grd = BABYLON.Mesh.CreatePlane("grd", 50, this.scene);
         grd.showBoundingBox = true;
         grd.position = new BABYLON.Vector3(0, -2.02, 0);

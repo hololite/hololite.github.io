@@ -82,7 +82,7 @@ export class BasicMaterialScene extends VkScene {
         material.fogEnabled = false;
 
         let plane = BABYLON.Mesh.CreatePlane(BasicMaterialScene.floorName, 150, this.scene);
-        this.teleportMeshes.push(plane);
+        this.addTeleportMesh(plane);
         plane.material = material;
         plane.position.y -= 5;
         plane.rotation.x = Math.PI / 2;

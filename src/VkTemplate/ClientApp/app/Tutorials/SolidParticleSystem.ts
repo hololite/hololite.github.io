@@ -171,7 +171,7 @@ export class SPS2Scene extends VkScene {
         terrainMaterial.diffuseTexture3.uScale = terrainMaterial.diffuseTexture3.vScale = 50;
 
         this.ground = BABYLON.MeshBuilder.CreatePlane("g", { size: fact }, this.scene);
-        this.teleportMeshes.push(this.ground);
+        this.addTeleportMesh(this.ground);
         this.ground.rotation.x = Math.PI / 2;
         this.ground.material = terrainMaterial;
 
