@@ -746,6 +746,10 @@ export abstract class FirstScene extends VkScene {
 export class EndScene extends VkScene {
     createAssets(): void {
     }
+
+    onStart(): void {
+        VkApp.instance.vrHelper.exitVR();
+    }
 }
 
 export interface IVkDirector {

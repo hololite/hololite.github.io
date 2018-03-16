@@ -76,20 +76,35 @@ export class PlaygroundDirector implements IVkDirector {
     }
 
     public setNextScene(): void {
-        if (this._currentScene instanceof Video360Scene) {
-            this._nextScene = this.motorScene;
+        if (this._currentScene instanceof MotorScene) {
+            this._nextScene = this.material2Scene;
         }
-        else if (this._currentScene instanceof MotorScene) {
+        else if (this._currentScene instanceof Material2Scene) {
             this._nextScene = this.meshLoaderScene;
         }
+        else if (this._currentScene instanceof MeshLoaderScene) {
+            this._nextScene = this.vls2Scene;
+        }
+        else if (this._currentScene instanceof VLS2Scene) {
+            this._nextScene = this.spsScene;
+        }
+        else if (this._currentScene instanceof SPSScene) {
+            this._nextScene = this.materialScene;
+        }
+        else if (this._currentScene instanceof MaterialScene) {
+            this._nextScene = this.video360Scene;
+        }
+        else if (this._currentScene instanceof Video360Scene) {
+            this._nextScene = new EndScene();
+        }
+        //
+        //
+        //
         else if (this._currentScene instanceof CornellScene) {
             this._nextScene = this.meshLoaderScene;
         }
         else if (this._currentScene instanceof FrameScene) {
             this._nextScene = this.meshLoaderScene;
-        }
-        else if (this._currentScene instanceof MeshLoaderScene) {
-            this._nextScene = this.vls2Scene;
         }
         else if (this._currentScene instanceof FileLoaderScene) {
             this._nextScene = this.blendModeScene;
@@ -99,9 +114,6 @@ export class PlaygroundDirector implements IVkDirector {
         }
         else if (this._currentScene instanceof VLSScene) {
             this._nextScene = this.vls2Scene;
-        }
-        else if (this._currentScene instanceof VLS2Scene) {
-            this._nextScene = this.spsScene;
         }
         else if (this._currentScene instanceof RefractionScene) {
             this._nextScene = this.refraction2Scene;
@@ -114,15 +126,6 @@ export class PlaygroundDirector implements IVkDirector {
         }
         else if (this._currentScene instanceof ReflectionScene) {
             this._nextScene = this.spsScene;
-        }
-        else if (this._currentScene instanceof SPSScene) {
-            this._nextScene = this.materialScene;
-        }
-        else if (this._currentScene instanceof Material2Scene) {
-            this._nextScene = this.materialScene;
-        }
-        else if (this._currentScene instanceof MaterialScene) {
-            this._nextScene = this.video360Scene;
         }
         else if (this._currentScene instanceof BasicMaterialScene) {
             this._nextScene = this.animationScene;
@@ -139,48 +142,13 @@ export class PlaygroundDirector implements IVkDirector {
     }
 
     public start(): void {
-        this.cornellScene = new CornellScene();
         this.motorScene = new MotorScene();
-        this.video360Scene = new Video360Scene();
-        //this.motorScene.initialize();
-        this.uiScene = new UIScene();
-        //this.uiScene.initialize();
-        this.animationScene = new AnimationScene();
-        //this.animationScene.initialize();
         this.materialScene = new MaterialScene();
-        //this.materialScene.initialize();
         this.material2Scene = new Material2Scene();
-        //this.material2Scene.initialize();
-        this.bmScene = new BasicMaterialScene();
-        //this.bmScene.initialize();
-        this.reflectionScene = new ReflectionScene();
-        //this.reflectionScene.initialize();
+        this.video360Scene = new Video360Scene();
         this.spsScene = new SPSScene();
         this.spsScene.initialize();
-        this.sps2Scene = new SPS2Scene();
-        this.sps2Scene.initialize();
-        this.polyhedraScene = new PolyhedraScene();
-        //this.polyhedraScene.initialize();
-        this.refractionScene = new RefractionScene();
-        //this.refractionScene.initialize();
-        this.refraction2Scene = new Refraction2Scene();
-        //this.refraction2Scene.initialize();
-        this.vlsScene = new VLSScene();
-        //this.vlsScene.initialize();
         this.vls2Scene = new VLS2Scene();
-        //this.vls2Scene.initialize();
-        this.cityExplorerScene = new CityExplorerScene(
-            "assets/scenes/babylonjs/city/",
-            "HugeCity.babylon",
-            new BABYLON.Vector3(0, 40, 0),
-            new BABYLON.Vector3(0, 0, 10),
-            {
-                defaultEnv: false,
-                soundFile: "assets/dreamer.mp3"
-            }
-        );
-
-        /*
         this.meshLoaderScene = new MeshLoaderScene(
             "assets/gltf/bellydance/",
             "scene.gltf",
@@ -188,6 +156,43 @@ export class PlaygroundDirector implements IVkDirector {
             new BABYLON.Vector3(0, 5, 0),
             {
                 envDdsFile: "assets/textures/environment.dds",
+                soundFile: "assets/dreamer.mp3"
+            }
+        );
+
+        //this.cornellScene = new CornellScene();
+        //this.motorScene.initialize();
+        //this.uiScene = new UIScene();
+        //this.uiScene.initialize();
+        //this.animationScene = new AnimationScene();
+        //this.animationScene.initialize();
+        //this.materialScene = new MaterialScene();
+        //this.materialScene.initialize();
+        //this.material2Scene.initialize();
+        //this.bmScene = new BasicMaterialScene();
+        //this.bmScene.initialize();
+        //this.reflectionScene = new ReflectionScene();
+        //this.reflectionScene.initialize();
+        //this.sps2Scene = new SPS2Scene();
+        //this.sps2Scene.initialize();
+        //this.polyhedraScene = new PolyhedraScene();
+        //this.polyhedraScene.initialize();
+        //this.refractionScene = new RefractionScene();
+        //this.refractionScene.initialize();
+        //this.refraction2Scene = new Refraction2Scene();
+        //this.refraction2Scene.initialize();
+        //this.vlsScene.initialize();
+        //this.vls2Scene = new VLS2Scene();
+        //this.vls2Scene.initialize();
+
+        /*
+        this.cityExplorerScene = new CityExplorerScene(
+            "assets/scenes/babylonjs/city/",
+            "HugeCity.babylon",
+            new BABYLON.Vector3(0, 40, 0),
+            new BABYLON.Vector3(0, 0, 10),
+            {
+                defaultEnv: false,
                 soundFile: "assets/dreamer.mp3"
             }
         );
@@ -215,43 +220,35 @@ export class PlaygroundDirector implements IVkDirector {
             }
         );
         */
-        this.meshLoaderScene = new MeshLoaderScene(
-            "assets/scenes/babylonjs/city/",
-            "HugeCity.babylon",
-            new BABYLON.Vector3(0, 40, 0),
-            new BABYLON.Vector3(0, 0, 10),
-            {
-                defaultEnv: false,
-                soundFile: "assets/dreamer.mp3"
-            }
-        );
 
         //this.meshLoaderScene.initialize();
-        this.blendModeScene = new BlendModeScene();
+        //this.blendModeScene = new BlendModeScene();
         //this.blendModeScene.initialize();
+        /*
         this.fileLoaderScene = new FileLoaderScene(
             "https://www.babylonjs.com/Assets/DamagedHelmet/glTF/",
             "DamagedHelmet.gltf",
             new BABYLON.Vector3(0, 0, -2),
             new BABYLON.Vector3(0, 0, 0));
-            /*
             "assets/gltf/bellydance/",
             "scene.gltf",
             new BABYLON.Vector3(0, 10, -20),
             new BABYLON.Vector3(0, 5, 0));
-            */
+        */
         //this.fileLoaderScene.initialize();
+        /*
         this.fileLoaderScene2 = new FileLoaderScene(
             "assets/scenes/babylonjs/city/",
             "HugeCity.babylon",
             new BABYLON.Vector3(0, 200, -50),
             new BABYLON.Vector3(0, 5, 0));
+            */
         //this.fileLoaderScene2.initialize();
-        this.vr6DOFScene = new VRCamAndController6DOFScene();
+        //this.vr6DOFScene = new VRCamAndController6DOFScene();
         //this.vr6DOFScene.initialize();
-        this.frameScene = new FrameScene();
+        //this.frameScene = new FrameScene();
         //this.frameScene.initialize();
-        this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
+        //this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
         //this.setFirstScene(this.cityExplorerScene);

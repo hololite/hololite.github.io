@@ -13,7 +13,7 @@ import { VkMenu } from '../VkMenu'
 
 export interface IMeshLoaderOptions {
     rotate?:        boolean;
-    defaultEnv:     boolean;
+    defaultEnv?:    boolean;
     soundFile?:     string;
     envDdsFile?:    string;
     scale?:         number;
