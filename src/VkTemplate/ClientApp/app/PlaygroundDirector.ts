@@ -156,7 +156,7 @@ export class PlaygroundDirector implements IVkDirector {
             new BABYLON.Vector3(0, 5, 0),
             {
                 envDdsFile: "assets/textures/environment.dds",
-                soundFile: "assets/dreamer.mp3"
+                soundFile: "assets/AmericanScience.mp3"
             }
         );
 

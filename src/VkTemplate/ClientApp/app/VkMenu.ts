@@ -54,6 +54,10 @@ export class VkMenu {
         this._enableMenu = enable;
 
         if (enable) {
+            this._menuOptionPlane.position = VkApp.instance.vrHelper.webVRCamera.devicePosition.clone();
+            this._menuOptionPlane.position.y += 3;
+            this._menuOptionPlane.rotationQuaternion = VkApp.instance.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
+            this._menuOptionPlane.translate(BABYLON.Axis.Z, 10, BABYLON.Space.LOCAL);
             VkApp.instance.showLaserPointer();
         }
     }
@@ -70,12 +74,8 @@ export class VkMenu {
         this.scene.onBeforeRenderObservable.add(()=>{
             // Head position/rotation
             if (this.enableMenu) {
-                this._menuOptionPlane.position = VkApp.instance.vrHelper.webVRCamera.devicePosition.clone()
-                this._menuOptionPlane.position.z += 10;
-                this._menuOptionPlane.position.y += 3;
-                this._menuOptionPlane.rotationQuaternion = VkApp.instance.vrHelper.webVRCamera.deviceRotationQuaternion.clone()
+                this._menuOptionPlane.rotationQuaternion = VkApp.instance.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
             }
         })
-
     }
 }

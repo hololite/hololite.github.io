@@ -11,7 +11,7 @@ import { VkScene, FirstScene } from '../Vk'
 import { VkMenu } from '../VkMenu'
 
 export class Video360Scene extends FirstScene {
-    private menu: VkMenu = new VkMenu(this, "Last Scene");
+    private menu: VkMenu = new VkMenu(this, "End Scene");
     private dome: BABYLON.VideoDome = null;
 
     /*

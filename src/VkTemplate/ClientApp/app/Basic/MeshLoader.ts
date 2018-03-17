@@ -17,6 +17,7 @@ export interface IMeshLoaderOptions {
     soundFile?:     string;
     envDdsFile?:    string;
     scale?:         number;
+    posDelta?:      BABYLON.Vector3;
 }
 
 class MeshLoaderOptions implements IMeshLoaderOptions {
@@ -32,6 +33,8 @@ class MeshLoaderOptions implements IMeshLoaderOptions {
                 this.envDdsFile = args.envDdsFile;
             if (args.scale !== undefined)
                 this.scale = args.scale;
+            if (args.posDelta !== undefined)
+                this.posDelta = args.posDelta;
         }
     }
 
@@ -40,6 +43,7 @@ class MeshLoaderOptions implements IMeshLoaderOptions {
     soundFile:      string = "";
     envDdsFile:     string = "";
     scale:          number = 1;
+    posDelta:      BABYLON.Vector3 = null;
 }
 
 export class MeshLoaderScene extends FirstScene implements EventListenerObject {
@@ -192,6 +196,14 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
             this.meshes = newMeshes;
 
             for (let m of this.meshes) {
+                if (this.loaderOptions.posDelta !== null) {
+                    m.position.addInPlace(this.loaderOptions.posDelta);
+                }
+
+                if (this.loaderOptions.scale !== 1) {
+                    m.scaling.scaleInPlace(this.loaderOptions.scale);
+                }
+
                 m.isPickable = true;
                 if (!m.name.startsWith("Facade")) {
                     // add to teleport mesh
@@ -203,9 +215,6 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
                 }
             }
 
-            if (this.loaderOptions.scale !== 1) {
-                this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
-            }
         });
 
         this.createSound();
