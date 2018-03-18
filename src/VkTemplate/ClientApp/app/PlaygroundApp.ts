@@ -1,5 +1,5 @@
-import { Common } from './Common'
-import { VkApp, VkAppOptions } from './Vk'
+import { Common } from './../../../VkCore/Common'
+import { VkApp, VkAppOptions } from './../../../VkCore/Vk'
 import { PlaygroundDirector } from './PlaygroundDirector'
 
 export class PlaygroundApp extends VkApp {

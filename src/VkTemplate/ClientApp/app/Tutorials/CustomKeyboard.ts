@@ -1,10 +1,10 @@
-﻿import 'babylonjs'
+import 'babylonjs'
 import 'babylonjs-gui'
 //import 'babylonjs-loaders'
 //import 'babylonjs-materials';
 //import 'cannon';
 //import 'oimo';
-import { Common } from '../Common'
+import { Common } from '../../../../VkCore/Common'
 
 export class CustomKeyboard {
     private readonly SHIFT = "\u21E7";

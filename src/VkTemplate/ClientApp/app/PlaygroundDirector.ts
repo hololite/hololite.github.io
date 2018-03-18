@@ -1,5 +1,5 @@
-import { Common } from './Common'
-import { VkApp, IVkDirector, VkScene, EndScene } from './Vk'
+import { Common } from './../../../VkCore/Common'
+import { VkApp, IVkDirector, VkScene, EndScene } from './../../../VkCore/Vk'
 import { BasicMaterialScene } from './Basic/BasicMaterials';
 import { MaterialScene, Material2Scene } from './Tutorials/Material';
 import { BasicShapeScene } from './Basic/BasicTest';
@@ -159,6 +159,16 @@ export class PlaygroundDirector implements IVkDirector {
                 soundFile: "assets/AmericanScience.mp3"
             }
         );
+        this.cityExplorerScene = new CityExplorerScene(
+            "assets/scenes/babylonjs/city/",
+            "HugeCity.babylon",
+            new BABYLON.Vector3(0, 40, 0),
+            new BABYLON.Vector3(0, 0, 10),
+            {
+                defaultEnv: false,
+                soundFile: "assets/dreamer.mp3"
+            }
+        );
 
         //this.cornellScene = new CornellScene();
         //this.motorScene.initialize();
@@ -185,18 +195,6 @@ export class PlaygroundDirector implements IVkDirector {
         //this.vls2Scene = new VLS2Scene();
         //this.vls2Scene.initialize();
 
-        /*
-        this.cityExplorerScene = new CityExplorerScene(
-            "assets/scenes/babylonjs/city/",
-            "HugeCity.babylon",
-            new BABYLON.Vector3(0, 40, 0),
-            new BABYLON.Vector3(0, 0, 10),
-            {
-                defaultEnv: false,
-                soundFile: "assets/dreamer.mp3"
-            }
-        );
-        */
         /*
         this.meshLoaderScene = new MeshLoaderScene(
             "assets/gltf/car1/",
@@ -251,7 +249,7 @@ export class PlaygroundDirector implements IVkDirector {
         //this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
-        //this.setFirstScene(this.cityExplorerScene);
-        this.setFirstScene(this.motorScene);
+        this.setFirstScene(this.cityExplorerScene);
+        //this.setFirstScene(this.motorScene);
     }
 }

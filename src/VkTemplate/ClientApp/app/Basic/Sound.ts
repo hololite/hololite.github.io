@@ -4,8 +4,8 @@ import 'babylonjs-loaders'
 //import 'babylonjs.materials';
 import 'cannon';
 import 'oimo';
-import { Common } from '../Common'
-import { VkScene } from '../Vk'
+import { Common } from '../../../../VkCore/Common'
+import { VkScene } from '../../../../VkCore/Vk'
 
 export class SoundScene extends VkScene {
     /*

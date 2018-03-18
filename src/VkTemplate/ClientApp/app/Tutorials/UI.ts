@@ -4,8 +4,8 @@ import 'babylonjs-loaders'
 import 'babylonjs-materials';
 import 'cannon';
 import 'oimo';
-import { Common } from '../Common'
-import { VkScene, ControllerMode } from '../Vk'
+import { Common } from '../../../../VkCore/Common'
+import { VkScene, ControllerMode } from '../../../../VkCore/Vk'
 import { CustomKeyboard } from './CustomKeyboard'
 
 export class UIScene extends VkScene {

@@ -4,7 +4,7 @@ import 'babylonjs-loaders'
 //import 'babylonjs.materials';
 import 'cannon';
 import 'oimo';
-import { Common } from '../Common'
+import { Common } from '../../../../VkCore/Common'
 //import { Game } from 'Game'
 
 class SceneLoadingScene {

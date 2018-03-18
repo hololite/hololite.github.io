@@ -4,9 +4,9 @@ import 'babylonjs-loaders'
 //import 'babylonjs.materials';
 import 'cannon';
 import 'oimo';
-import { Common } from '../Common'
-import { VkScene, VkApp, IVkDirector, FirstScene } from '../Vk'
-import { VkMenu } from '../VkMenu'
+import { Common } from '../../../../VkCore/Common'
+import { VkScene, VkApp, IVkDirector, FirstScene } from '../../../../VkCore/Vk'
+import { VkMenu } from '../../../../VkCore/VkMenu'
 
 export class MotorScene extends FirstScene {
     private static readonly floorName: string = "My Floor";

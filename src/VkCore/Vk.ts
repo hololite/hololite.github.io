@@ -4,7 +4,7 @@ import 'babylonjs'
 import 'babylonjs-loaders'
 import { AssetContainerEx } from './AssetContainerEx'
 import { Common } from './Common'
-import { VRHelper } from './Basic/VRHelper'
+//import { VRHelper } from './Basic/VRHelper'
 
 export enum ControllerMode {
     Teleportation, Interaction

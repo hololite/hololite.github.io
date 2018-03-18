@@ -4,9 +4,9 @@ import 'babylonjs-loaders'
 import 'babylonjs-materials'
 import 'cannon';
 import 'oimo';
-import { Common } from '../Common'
-import { VkScene, FirstScene } from '../Vk'
-import { VkMenu } from '../VkMenu'
+import { Common } from '../../../../VkCore/Common'
+import { VkScene, FirstScene } from '../../../../VkCore/Vk'
+import { VkMenu } from '../../../../VkCore/VkMenu'
 
 export class ReflectionScene extends FirstScene {
     private yellowSphere: BABYLON.Mesh;

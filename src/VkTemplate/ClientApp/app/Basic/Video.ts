@@ -6,9 +6,9 @@ import 'babylonjs-post-process'
 import 'babylonjs-procedural-textures'
 import 'cannon';
 import 'oimo';
-import { Common } from '../Common'
-import { VkScene, FirstScene } from '../Vk'
-import { VkMenu } from '../VkMenu'
+import { Common } from '../../../../VkCore/Common'
+import { VkScene, FirstScene } from '../../../../VkCore/Vk'
+import { VkMenu } from '../../../../VkCore/VkMenu'
 
 export class Video360Scene extends FirstScene {
     private menu: VkMenu = new VkMenu(this, "End Scene");

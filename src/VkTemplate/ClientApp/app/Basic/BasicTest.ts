@@ -1,6 +1,6 @@
 import 'babylonjs'
-import { Common } from '../Common'
-import { VkScene } from '../Vk'
+import { Common } from '../../../../VkCore/Common'
+import { VkScene } from '../../../../VkCore/Vk'
 
 export class BasicShapeScene extends VkScene {
     protected camera: BABYLON.FreeCamera;

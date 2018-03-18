@@ -5,9 +5,9 @@ import 'babylonjs-loaders'
 //import 'babylonjs.materials';
 import 'cannon';
 import 'oimo';
-import { Common } from '../Common'
-import { VkScene } from '../Vk'
-import { VkMenu } from '../VkMenu'
+import { Common } from '../../../../VkCore/Common'
+import { VkScene } from '../../../../VkCore/Vk'
+import { VkMenu } from '../../../../VkCore/VkMenu'
 
 class PowerEase extends BABYLON.EasingFunction implements BABYLON.IEasingFunction {
     constructor(public power: number = 2) {

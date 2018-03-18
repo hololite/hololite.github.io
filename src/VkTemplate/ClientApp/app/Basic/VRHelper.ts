@@ -1,9 +1,9 @@
-﻿import 'babylonjs'
+import 'babylonjs'
 import 'babylonjs-gui'
 import 'babylonjs-loaders'
 import 'cannon';
 import 'oimo';
-import { Common } from '../Common'
+import { Common } from '../../../../VkCore/Common'
 
 export class VRHelper {
     readonly magic                  = 888;

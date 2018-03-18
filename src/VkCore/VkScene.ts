@@ -1,7 +1,7 @@
 import 'babylonjs'
 //import 'babylonjs-inspector'                // to use the bundled inspector (don't use one from babylon cdn)
 import { Common } from './Common'
-import { VRHelper } from './Basic/VRHelper'
+//import { VRHelper } from './Basic/VRHelper'
 
 enum ControllerMode {
     Teleportation, Interaction
