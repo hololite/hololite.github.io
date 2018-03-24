@@ -1,3 +1,11 @@
+//
+//  Mapbox Settings:
+//  ================
+//
+//  index.html:      <head> ... <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
+//  package.json:    "dependencies": { ..., "mapbox-gl": "^0.44.1" }
+//  tsconfig.json:   "types": [ ..., "mapbox-gl" ]
+//
 import * as mapboxgl from 'mapbox-gl';
 
 export class Mapbox {
