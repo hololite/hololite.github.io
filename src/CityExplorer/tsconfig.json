@@ -2,7 +2,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./wwwroot/out-tsc",
+    "sourceRoot": "ClientApp",
     "sourceMap": true,
+    "mapRoot": "wwwroot",
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
@@ -14,6 +16,7 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+	"types": ["mapbox-gl"]
   }
 }
