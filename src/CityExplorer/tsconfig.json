@@ -17,6 +17,8 @@
       "es2017",
       "dom"
     ],
-	"types": ["mapbox-gl"]
+    "types": [
+        "mapbox-gl"     // for mapbox
+    ]
   }
 }
