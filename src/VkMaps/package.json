@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --open --base-href \"/VkMaps\"/",
-    "build": "ng build --prod",
+    "start": "ng serve --open --host 0.0.0.0 --base-href \"/VkMaps\"/",
+    "build": "ng build --prod --base-href \"/VkMaps\"/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
