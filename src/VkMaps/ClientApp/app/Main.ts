@@ -1,7 +1,8 @@
 import { Mapbox } from './Mapbox';
+import { BingMaps } from './BingMaps';
 
 export class VkMap {
     static start(): void {
-        Mapbox.start();
+        BingMaps.start();
     }
 }

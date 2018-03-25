@@ -12,7 +12,7 @@
       "node_modules/@types"
     ],
 	"types": [
-      "mapbox-gl"
+      "mapbox-gl", "bingmaps"
     ],
     "lib": [
       "es2017",
