@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkTemplate", "VkTemplate\Vk
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VkCore", "VkCore\VkCore.csproj", "{DBC938D9-C8D5-4777-9B87-5B504117A721}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityExplorer", "CityExplorer\CityExplorer.csproj", "{C9A71192-9EDF-4DEB-995D-6A12885F86AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CityExplorer", "CityExplorer\CityExplorer.csproj", "{C9A71192-9EDF-4DEB-995D-6A12885F86AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VkMaps", "VkMaps\VkMaps.csproj", "{43C006F2-DCCA-42E9-9B91-9FEBAFD176C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,10 @@ Global
 		{C9A71192-9EDF-4DEB-995D-6A12885F86AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9A71192-9EDF-4DEB-995D-6A12885F86AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9A71192-9EDF-4DEB-995D-6A12885F86AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43C006F2-DCCA-42E9-9B91-9FEBAFD176C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43C006F2-DCCA-42E9-9B91-9FEBAFD176C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43C006F2-DCCA-42E9-9B91-9FEBAFD176C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43C006F2-DCCA-42E9-9B91-9FEBAFD176C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

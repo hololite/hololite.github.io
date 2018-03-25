@@ -1,12 +1,12 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "name": "city-explorer"
+    "name": "vk-maps"
   },
   "apps": [
     {
       "root": "ClientApp",
-      "outDir": "wwwroot/CityExplorer",
+      "outDir": "wwwroot/VkMaps",
       "assets": [
         "assets",
         "favicon.ico"
@@ -36,11 +36,11 @@
   },
   "lint": [
     {
-      "project": "src/tsconfig.app.json",
+      "project": "ClientApp/tsconfig.app.json",
       "exclude": "**/node_modules/**"
     },
     {
-      "project": "src/tsconfig.spec.json",
+      "project": "ClientApp/tsconfig.spec.json",
       "exclude": "**/node_modules/**"
     },
     {
