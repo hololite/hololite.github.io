@@ -1,5 +1,5 @@
-import { Common } from './../../../VkCore/Common'
-import { VkApp, IVkDirector, VkScene, EndScene } from './../../../VkCore/Vk'
+import { Common } from './VkCore/Common'
+import { VkApp, IVkDirector, VkScene, EndScene } from './VkCore/Vk'
 import { CityExplorerScene } from './scenes/CityExplorer';
 
 export class Director implements IVkDirector {

@@ -10,6 +10,7 @@ export class AppComponent {
     title = 'vk';
 
     constructor() {
+        App.initialize();
         App.instance.start();
     }
 }

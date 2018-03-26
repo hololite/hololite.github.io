@@ -1,7 +1,10 @@
 {
   "name": "city-explorer",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "MIT",
+  "description": "",
+  "author": "",
+  "keywords": [],
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open --host 0.0.0.0 --port 3002 --base-href \"/CityExplorer/\"",

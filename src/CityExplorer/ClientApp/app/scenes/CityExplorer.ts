@@ -7,9 +7,9 @@ import 'babylonjs-post-process'
 import 'babylonjs-procedural-textures'
 import 'cannon';
 import 'oimo';
-import { Common } from '../../../../VkCore/Common'
-import { VkScene, FirstScene } from '../../../../VkCore/Vk'
-import { VkMenu } from '../../../../VkCore/VkMenu'
+import { Common } from './../VkCore/Common'
+import { VkScene, FirstScene } from './../VkCore/Vk'
+import { VkMenu } from './../VkCore/VkMenu'
 
 export interface ICityExplorerOptions {
     rotate?:        boolean;

@@ -1,5 +1,5 @@
-import { Common } from './../../../VkCore/Common'
-import { VkApp, VkAppOptions } from './../../../VkCore/Vk'
+import { Common } from './VkCore/Common'
+import { VkApp, VkAppOptions } from './VkCore/Vk'
 import { Director } from './Director'
 
 export class App extends VkApp {
