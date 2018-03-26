@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --open --host 0.0.0.0 --base-href \"/CityExplorer/\"",
+    "start": "ng serve --open --host 0.0.0.0 --port 3002 --base-href \"/CityExplorer/\"",
     "build": "ng build --prod --base-href \"/CityExplorer/\"",
     "test": "ng test",
     "lint": "ng lint",
