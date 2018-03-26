@@ -1,18 +1,31 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset='utf-8' />
-    <title>Display a map</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
+  <meta charset="utf-8">
+  <title>VkTemplate</title>
+     <style>
+        html, body {
+            overflow: hidden;
+            width   : 100%;
+            height  : 100%;
+            margin  : 0;
+            padding : 0;
+        }
+
+        #renderCanvas {
+            width   : 100%;
+            height  : 100%;
+            touch-action: none;
+        }
     </style>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script src="https://code.jquery.com/pep/0.4.1/pep.js"></script>
 </head>
 <body>
-	<vk-root></vk-root>
-    <div id="map"></div>
-	<canvas id="renderCanvas"></canvas>
+  <vk-root></vk-root>
+   <canvas id="renderCanvas"></canvas>
 </body>
 </html>

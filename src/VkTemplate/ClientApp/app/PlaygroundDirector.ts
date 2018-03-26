@@ -21,7 +21,6 @@ import { FrameScene } from './Basic/Frame';
 import { TerrainScene } from './Basic/Terrain';
 import { Video360Scene } from './Basic/Video';
 import { CornellScene } from './Basic/Cornell';
-import { CityExplorerScene, ICityExplorerOptions } from './Scenes/CityExplorer';
 
 export class PlaygroundDirector implements IVkDirector {
     private _currentScene: VkScene = null;
@@ -51,7 +50,6 @@ export class PlaygroundDirector implements IVkDirector {
     private terrainScene: TerrainScene = null;
     private video360Scene: Video360Scene = null;
     private cornellScene: CornellScene = null;
-    private cityExplorerScene: CityExplorerScene= null;
 
     public renderScene(): void {
         //console.log(">> " + this.constructor.name);
@@ -159,16 +157,6 @@ export class PlaygroundDirector implements IVkDirector {
                 soundFile: "assets/AmericanScience.mp3"
             }
         );
-        this.cityExplorerScene = new CityExplorerScene(
-            "assets/scenes/babylonjs/city/",
-            "HugeCity.babylon",
-            new BABYLON.Vector3(0, 40, 0),
-            new BABYLON.Vector3(0, 0, 10),
-            {
-                defaultEnv: false,
-                soundFile: "assets/dreamer.mp3"
-            }
-        );
 
         //this.cornellScene = new CornellScene();
         //this.motorScene.initialize();
@@ -249,7 +237,6 @@ export class PlaygroundDirector implements IVkDirector {
         //this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
-        this.setFirstScene(this.cityExplorerScene);
-        //this.setFirstScene(this.motorScene);
+        this.setFirstScene(this.motorScene);
     }
 }

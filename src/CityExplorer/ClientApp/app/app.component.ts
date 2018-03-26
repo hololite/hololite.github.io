@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { VkMap } from './Main'
+import { App } from './App'
 
 @Component({
   selector: 'vk-root',
@@ -10,6 +10,6 @@ export class AppComponent {
     title = 'vk';
 
     constructor() {
-        VkMap.start();
+        App.instance.start();
     }
 }

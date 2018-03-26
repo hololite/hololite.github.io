@@ -18,7 +18,14 @@
       "dom"
     ],
     "types": [
-        "mapbox-gl"     // for mapbox
+      "babylonjs",
+      "babylonjs-loaders",
+      "babylonjs-serializers",
+      "babylonjs-inspector",
+      "babylonjs-gui",
+      "babylonjs-procedural-textures",
+      "babylonjs-post-process",
+      "babylonjs-materials"	
     ]
   }
 }

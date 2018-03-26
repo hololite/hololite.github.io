@@ -3,6 +3,7 @@ import { BingMaps } from './BingMaps';
 
 export class VkMap {
     static start(): void {
-        BingMaps.start();
+		//BingMaps.start();
+        Mapbox.start();
     }
 }
