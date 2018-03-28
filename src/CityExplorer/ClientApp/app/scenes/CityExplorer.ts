@@ -213,6 +213,21 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
         // for browser interaction using mouse click
         this.canvas.addEventListener("pointerdown", this, false);
+
+        // 
+        this.beforeRenderCallback = () => {
+            let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
+
+            //console.log(`x=${rot.x}, y=${rot.y}, z=${rot.z}`);
+            let deltaY = Math.sin(rot.x * Math.PI);
+            let deltaZ = Math.cos(rot.y * Math.PI);
+            let deltaX = Math.sin(rot.y * Math.PI);
+
+            deltaY = (deltaY < 0) ? deltaY : deltaY / 20;
+            this.vrHelper.currentVRCamera.position.y -= (deltaY);
+            this.vrHelper.currentVRCamera.position.x += (deltaX/20);
+            this.vrHelper.currentVRCamera.position.z += (deltaZ/20);
+        }
     }
 
     protected onStop(): void {
