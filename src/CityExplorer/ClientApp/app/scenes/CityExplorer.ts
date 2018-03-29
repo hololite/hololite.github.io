@@ -43,6 +43,7 @@ class CityExplorerOptions implements ICityExplorerOptions {
 }
 
 export class CityExplorerScene extends FirstScene implements EventListenerObject {
+    private light: BABYLON.HemisphericLight = null;
     private menu: VkMenu = new VkMenu(this);
     private decals: BABYLON.Mesh[] = [];
     private decalMaterial: BABYLON.StandardMaterial;
@@ -54,6 +55,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private skybox: BABYLON.Mesh = null;
     private skyboxMaterial: BABYLON.SkyMaterial = null;
     private loaderOptions: CityExplorerOptions = null;
+    private skyboxMode: number = 0;
 
     /*
     * Public members
@@ -69,9 +71,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.loaderOptions = new CityExplorerOptions(options);
     }
 
+    /*
     protected onMenuButton(controller: BABYLON.WebVRController, pressed: boolean) {
         this.menu.handleMenuButton(controller, pressed);
     }
+    */
 
     private createSound(): void {
         console.log(`**** soundFile=${this.loaderOptions.soundFile}`);
@@ -82,15 +86,15 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.scene,
                 () => {},
                 {
-                    loop: true, autoplay: true, volume: 0.3, spatialSound: true, distanceModel: "linear"
+                    loop: true, autoplay: true, volume: 0.5, spatialSound: true, distanceModel: "linear"
                 }
             );
 
             // Set 3D sound's position
-            this.sound3D.setPosition(new BABYLON.Vector3(0, 5, 0));
+            this.sound3D.setPosition(new BABYLON.Vector3(0, 100, 0));
 
             // Set 3D sound's max distance (linear model)
-            this.sound3D.maxDistance = 20;
+            this.sound3D.maxDistance = 1000;
         }
     }
 
@@ -138,15 +142,15 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     }
     
     protected createAssets(): void {
-        let light = new BABYLON.HemisphericLight("Hemi", new BABYLON.Vector3(0, 1, 0), this.scene);
-        light.intensity = 2;
+        this.light = new BABYLON.HemisphericLight("Hemi", new BABYLON.Vector3(0, 1, 0), this.scene);
+        this.light.intensity = 2;
 
         this.decalMaterial = new BABYLON.StandardMaterial("decalMat", this.scene);
         this.decalMaterial.diffuseTexture = new BABYLON.Texture("assets/textures/impact.png", this.scene);
         this.decalMaterial.diffuseTexture.hasAlpha = true;
         this.decalMaterial.zOffset = -2;
 
-        this.menu.createAssets();
+        //this.menu.createAssets();
     }
 
     // EventListenerObject interface method
@@ -183,6 +187,54 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 		this.scene.stopAnimation(this.skybox);
 		this.scene.beginDirectAnimation(this.skybox, [animation], 0, 100, false, 1);
 	};
+
+    private updateSkyboxSettings(): void {
+        this.skyboxMode++;
+        if (this.skyboxMode > 4) {
+            this.skyboxMode = 1;
+        }
+
+        let timeout = 0;
+
+        switch (this.skyboxMode) {
+            case 1:
+                //noon
+                this.light.intensity = 2;
+                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
+                //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 1.0); 
+                console.log(`luminance=${this.skyboxMaterial.luminance}`);
+                timeout = 120000;
+                break;
+
+            case 2:
+                // afternoon
+                this.light.intensity = 0.5;
+                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);  // night
+                timeout = 20000;
+                break;
+
+            case 3:
+                // night
+                this.light.intensity = 0.2;
+                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5);  // night
+                timeout = 10000;
+                break;
+
+            case 4:
+                // morning
+                this.light.intensity = 0.5;
+                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.4);  // morning
+                //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 0.1); // morning
+                timeout = 20000;
+                break;
+
+            //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 1.0); 
+            //this.setSkyboxSettings("material.turbidity", this.skyboxMaterial.turbidity, 40); 
+            //this.setSkyboxSettings("material.turbidity", this.skyboxMaterial.turbidity, 5); 
+        }
+
+        setTimeout(() => { this.updateSkyboxSettings(); }, timeout);
+    }
 
     protected onStart(): void {
         /*
@@ -234,15 +286,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         });
 
         this.createSkybox();
-	    this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0);
-    	//this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5); 
-    	//this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 0.1); 
-    	//this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 1.0); 
-    	//this.setSkyboxSettings("material.turbidity", this.skyboxMaterial.turbidity, 40); 
-    	//this.setSkyboxSettings("material.turbidity", this.skyboxMaterial.turbidity, 5); 
+        this.updateSkyboxSettings();
 
         this.createSound();
-        this.menu.start();
+        //this.menu.start();
 
         // for browser interaction using mouse click
         this.canvas.addEventListener("pointerdown", this, false);
@@ -256,11 +303,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             let deltaZ = Math.cos(rot.y * Math.PI);
             let deltaX = Math.sin(rot.y * Math.PI);
 
-            deltaY = (deltaY < 0) ? deltaY : deltaY / 20;
-            this.vrHelper.currentVRCamera.position.y -= (deltaY/2);
-            this.vrHelper.currentVRCamera.position.x += (deltaX/20);
-            this.vrHelper.currentVRCamera.position.z += (deltaZ/20);
+            deltaY = (deltaY < 0) ? deltaY/5 : deltaY/50;
+            this.vrHelper.currentVRCamera.position.y -= (deltaY);
+            this.vrHelper.currentVRCamera.position.x += (deltaX/40);
+            this.vrHelper.currentVRCamera.position.z += (deltaZ/40);
         }
+
     }
 
     protected onStop(): void {
