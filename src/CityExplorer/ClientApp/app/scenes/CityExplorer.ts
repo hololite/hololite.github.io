@@ -51,7 +51,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private file: string;
     private skyBox: BABYLON.Mesh = null;
     private sound3D: BABYLON.Sound = null;
-
+    private skybox: BABYLON.Mesh = null;
+    private skyboxMaterial: BABYLON.SkyMaterial = null;
     private loaderOptions: CityExplorerOptions = null;
 
     /*
@@ -159,6 +160,30 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         console.log('<<<< onPointerDown');
     }
 
+    private createSkybox(): void {
+        // Sky material
+        this.skyboxMaterial = new BABYLON.SkyMaterial("skyMaterial", this.scene);
+        this.skyboxMaterial.backFaceCulling = false;
+        //skyboxMaterial._cachedDefines.FOG = true;
+
+        // Sky mesh (box)
+        this.skybox = BABYLON.Mesh.CreateBox("skyBox", 1500.0, this.scene);
+        this.skybox.material = this.skyboxMaterial;
+    }
+
+    private setSkyboxSettings(property, from, to): void {
+		let keys = [
+            { frame: 0, value: from },
+			{ frame: 100, value: to }
+        ];
+		
+		let animation = new BABYLON.Animation("animation", property, 100, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+		animation.setKeys(keys);
+		
+		this.scene.stopAnimation(this.skybox);
+		this.scene.beginDirectAnimation(this.skybox, [animation], 0, 100, false, 1);
+	};
+
     protected onStart(): void {
         /*
         let black =  BABYLON.Color3.Black();
@@ -208,6 +233,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             }
         });
 
+        this.createSkybox();
+	    this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0);
+    	//this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5); 
+    	//this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 0.1); 
+    	//this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 1.0); 
+    	//this.setSkyboxSettings("material.turbidity", this.skyboxMaterial.turbidity, 40); 
+    	//this.setSkyboxSettings("material.turbidity", this.skyboxMaterial.turbidity, 5); 
+
         this.createSound();
         this.menu.start();
 
@@ -224,7 +257,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             let deltaX = Math.sin(rot.y * Math.PI);
 
             deltaY = (deltaY < 0) ? deltaY : deltaY / 20;
-            this.vrHelper.currentVRCamera.position.y -= (deltaY);
+            this.vrHelper.currentVRCamera.position.y -= (deltaY/2);
             this.vrHelper.currentVRCamera.position.x += (deltaX/20);
             this.vrHelper.currentVRCamera.position.z += (deltaZ/20);
         }
