@@ -171,7 +171,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         //skyboxMaterial._cachedDefines.FOG = true;
 
         // Sky mesh (box)
-        this.skybox = BABYLON.Mesh.CreateBox("skyBox", 1500.0, this.scene);
+        this.skybox = BABYLON.Mesh.CreateBox("skyBox", 10000.0, this.scene);
         this.skybox.material = this.skyboxMaterial;
     }
 
@@ -272,11 +272,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 m.isPickable = true;
                 if (!m.name.startsWith("Facade")) {
                     // add to teleport mesh
-                    BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
+                    //BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
                     this.vrHelper.addFloorMesh(<BABYLON.Mesh>m);
                 }
                 else {
-                    BABYLON.Tools.Log(`mesh: name=${m.name}`);
+                    //BABYLON.Tools.Log(`mesh: name=${m.name}`);
                 }
             }
 
@@ -295,20 +295,40 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.canvas.addEventListener("pointerdown", this, false);
 
         // 
+        //  logic for navigation movements based on headset orientation
+        //  headset orientation determines the movement of its position
+        //
         this.beforeRenderCallback = () => {
+            let radius = 0.03;
             let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
 
             //console.log(`x=${rot.x}, y=${rot.y}, z=${rot.z}`);
-            let deltaY = Math.sin(rot.x * Math.PI);
-            let deltaZ = Math.cos(rot.y * Math.PI);
-            let deltaX = Math.sin(rot.y * Math.PI);
+            let deltaY = radius * Math.sin(rot.x * Math.PI);
+            let deltaZ = radius * Math.cos(rot.y * Math.PI);
+            let deltaX = radius * Math.sin(rot.y * Math.PI);
+            deltaY = (deltaY < 0) ? deltaY*7 : deltaY;  // make moving up faster than moving down
 
-            deltaY = (deltaY < 0) ? deltaY/5 : deltaY/50;
-            this.vrHelper.currentVRCamera.position.y -= (deltaY);
-            this.vrHelper.currentVRCamera.position.x += (deltaX/40);
-            this.vrHelper.currentVRCamera.position.z += (deltaZ/40);
+            this.vrHelper.currentVRCamera.position.y -= deltaY;
+            this.vrHelper.currentVRCamera.position.x += deltaX;
+            this.vrHelper.currentVRCamera.position.z += deltaZ;
         }
 
+
+        /* for raycasting
+        this.vrHelper.raySelectionPredicate = (mesh: BABYLON.AbstractMesh) => {
+            return true;
+        };
+
+        this.vrHelper.onNewMeshPicked.add((pickInfo: BABYLON.PickingInfo, eventState: BABYLON.EventState) => {
+            if (pickInfo.hit && (pickInfo.distance < 5)) {
+                console.log(`**** DANGER!!! mesh: name=${pickInfo.pickedMesh.name}, distance=${pickInfo.distance}`);
+                this.collided = true;
+            }
+            else {
+                this.collided = false;
+            }
+        });
+        */
     }
 
     protected onStop(): void {

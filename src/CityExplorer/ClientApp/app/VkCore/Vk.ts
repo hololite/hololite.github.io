@@ -180,8 +180,13 @@ export class VkApp {
             //this._vrHelper.enableInteractions();
             this._vrHelper.enableTeleportation();
             this._vrHelper.displayGaze = true;
-            this._vrHelper.displayLaserPointer = true;
-            //this._vrHelper.webVROptions.defaultHeight = 2;
+            this._vrHelper.displayLaserPointer = false;
+            this._vrHelper.webVROptions.defaultHeight = 10;
+            this._vrHelper.webVROptions.rayLength = 200;
+
+            this._vrHelper.onAfterCameraTeleport.add((eventData: BABYLON.Vector3, eventState: BABYLON.EventState) => {
+                this.hideLaserPointer();
+            });
 
             /*
             this._vrHelper.onEnteringVR.add((vrHelper: BABYLON.VRExperienceHelper, eventState: BABYLON.EventState) => {
@@ -199,6 +204,9 @@ export class VkApp {
 
             this._vrHelper.onControllerMeshLoadedObservable.add((c: BABYLON.WebVRController, eventState: BABYLON.EventState) => {
                 console.log('>>>> onControllerMeshLoadedObservable');
+
+                this.hideLaserPointer();
+
                 let controller = <BABYLON.WindowsMotionController>c;
 
                 controller.onMenuButtonStateChangedObservable.add((eventData: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
@@ -556,7 +564,7 @@ export abstract class VkScene {
         //BABYLON.DebugLayer.InspectorURL = '/vendor.bundle.js';
 
         if (this.isVREnabled()) {
-            VkApp.instance.showLaserPointer();
+            //VkApp.instance.showLaserPointer();
             /*
             if (this._options.controllerMode === ControllerMode.Interaction) {
                 this.vrHelper.enableInteractions();
@@ -571,7 +579,7 @@ export abstract class VkScene {
             */
             this.vrHelper.displayGaze = true;
             //this.vrHelper.changeLaserColor(BABYLON.Color3.Yellow());
-            this.vrHelper.displayLaserPointer = true;
+            this.vrHelper.displayLaserPointer = false;
             //this.vrHelper.webVROptions.defaultHeight = 2;
 
             /*
@@ -726,6 +734,7 @@ export abstract class VkScene {
 
         this.unloadAssetsFromScene();
 
+        /*
         // the second step to add scene assets to the system assets
         // left-over assets of the first scene are related to VR controller assets
         // that need to be saved
@@ -734,6 +743,7 @@ export abstract class VkScene {
             this._controllerAssetsLoaded = true;
             //VkApp.instance.traceSceneAssets('after FirstScene');
         }
+        */
 
         VkApp.instance.director.setNextScene();
     }
