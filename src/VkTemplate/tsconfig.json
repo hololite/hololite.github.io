@@ -16,6 +16,7 @@
       "requirejs",
       "babylonjs",
       "babylonjs-loaders",
+      "babylonjs-gltf2interface",
       "babylonjs-serializers",
       "babylonjs-inspector",
       "babylonjs-gui",
