@@ -9,44 +9,10 @@ import 'cannon';
 import 'oimo';
 import { Common } from '../../../../VkCore/Common'
 import { VkScene, FirstScene } from '../../../../VkCore/Vk'
+import { IMeshLoaderOptions, MeshLoaderOptions } from '../Basic/MeshLoader'
 import { VkMenu } from '../../../../VkCore/VkMenu'
 
-export interface IMeshLoaderOptions {
-    rotate?:        boolean;
-    defaultEnv?:    boolean;
-    soundFile?:     string;
-    envDdsFile?:    string;
-    scale?:         number;
-    posDelta?:      BABYLON.Vector3;
-}
-
-export class MeshLoaderOptions implements IMeshLoaderOptions {
-    constructor(args?: IMeshLoaderOptions) {
-        if (args !== undefined) {
-            if (args.rotate !== undefined)
-                this.rotate = args.rotate;
-            if (args.defaultEnv !== undefined)
-                this.defaultEnv = args.defaultEnv;
-            if (args.soundFile !== undefined)
-                this.soundFile = args.soundFile;
-            if (args.envDdsFile !== undefined)
-                this.envDdsFile = args.envDdsFile;
-            if (args.scale !== undefined)
-                this.scale = args.scale;
-            if (args.posDelta !== undefined)
-                this.posDelta = args.posDelta;
-        }
-    }
-
-    rotate:         boolean = false;
-    defaultEnv:     boolean = true;
-    soundFile:      string = "";
-    envDdsFile:     string = "";
-    scale:          number = 1;
-    posDelta:      BABYLON.Vector3 = null;
-}
-
-export class MeshLoaderScene extends FirstScene implements EventListenerObject {
+export class OfficeMallScene extends FirstScene implements EventListenerObject {
     private menu: VkMenu = new VkMenu(this);
     private decals: BABYLON.Mesh[] = [];
     private decalMaterial: BABYLON.StandardMaterial;
@@ -61,15 +27,18 @@ export class MeshLoaderScene extends FirstScene implements EventListenerObject {
     /*
     * Public members
     */
-    constructor(path: string, file: string, position: BABYLON.Vector3, target: BABYLON.Vector3, options?: IMeshLoaderOptions) {
+    constructor() {
         super({
-            cameraInitialPosition: position,
-            cameraInitialTarget: target
+            cameraInitialPosition: new BABYLON.Vector3(0, 3000, -3000),
+            cameraInitialTarget: new BABYLON.Vector3(0, 0, 0)
         });
 
-        this.path = path;
-        this.file = file;
-        this.loaderOptions = new MeshLoaderOptions(options);
+        this.path = "assets/scenes/babylonjs/OfficeMall/";
+        this.file = "OfficeMall.babylon";
+        this.loaderOptions = new MeshLoaderOptions({
+            defaultEnv: false,
+            soundFile: "assets/AmericanScience.mp3"
+        });
     }
 
     protected onMenuButton(controller: BABYLON.WebVRController, pressed: boolean) {

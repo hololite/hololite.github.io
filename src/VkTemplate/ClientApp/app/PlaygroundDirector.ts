@@ -21,6 +21,7 @@ import { FrameScene } from './Basic/Frame';
 import { TerrainScene } from './Basic/Terrain';
 import { Video360Scene } from './Basic/Video';
 import { CornellScene } from './Basic/Cornell';
+import { OfficeMallScene } from './scenes/OfficeMallScene';
 
 export class PlaygroundDirector implements IVkDirector {
     private _currentScene: VkScene = null;
@@ -41,6 +42,7 @@ export class PlaygroundDirector implements IVkDirector {
     private vlsScene: VLSScene = null;
     private vls2Scene: VLS2Scene = null;
     private meshLoaderScene: MeshLoaderScene = null;
+    private officeMallScene: OfficeMallScene = null;
     private blendModeScene: BlendModeScene = null;
     private fileLoaderScene: FileLoaderScene = null;
     private fileLoaderScene2: FileLoaderScene = null;
@@ -157,6 +159,8 @@ export class PlaygroundDirector implements IVkDirector {
                 soundFile: "assets/AmericanScience.mp3"
             }
         );
+        this.officeMallScene = new OfficeMallScene(
+        );
 
         //this.cornellScene = new CornellScene();
         //this.motorScene.initialize();
@@ -237,6 +241,6 @@ export class PlaygroundDirector implements IVkDirector {
         //this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
-        this.setFirstScene(this.motorScene);
+        this.setFirstScene(this.officeMallScene);
     }
 }
