@@ -10,6 +10,7 @@ import 'oimo';
 import { Common } from './../VkCore/Common'
 import { VkScene, FirstScene } from './../VkCore/Vk'
 import { VkMenu } from './../VkCore/VkMenu'
+import * as Collections from 'typescript-collections'
 
 export interface ICityExplorerOptions {
     rotate?:        boolean;
@@ -236,6 +237,42 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         setTimeout(() => { this.updateSkyboxSettings(); }, timeout);
     }
 
+    private fixTextures(): void {
+        let textures = new Collections.Dictionary<string, Collections.Set<string>>();
+        let matNo = 1;
+
+        for (let m of this.scene.materials) {
+            if (m instanceof BABYLON.StandardMaterial) {
+                if (m.diffuseTexture) {
+                    let texture = m.diffuseTexture.name;
+
+                    console.log(`** material: no=${matNo++}, mat=${m.name}, texture=${texture}`);
+
+                    if (!textures.containsKey(texture)) {
+                        console.log(`>> creating entry for texture=${texture}`);
+                        textures.setValue(texture, new Collections.Set<string>());
+                    }
+
+                    let mats: Collections.Set<string> = textures.getValue(texture);
+                    if (!mats.contains(m.name)) {
+                        console.log(`>> adding mat=${m.name}, texture=${texture}`);
+                        mats.add(m.name);
+                    }
+
+                }
+            }
+        }
+
+        textures.forEach((texture: string, mats: Collections.Set<string>) => {
+            console.log(`**** texture=${texture}`);
+            let matArray = mats.toArray();
+            for (let m of matArray) {
+                console.log(`    mat=${m}`);
+            
+            }
+        });
+    }
+
     protected onStart(): void {
         /*
         let black =  BABYLON.Color3.Black();
@@ -283,6 +320,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             if (this.loaderOptions.scale !== 1) {
                 this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
             }
+
+            this.fixTextures();
         });
 
         this.createSkybox();

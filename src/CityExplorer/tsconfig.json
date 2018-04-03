@@ -25,7 +25,8 @@
       "babylonjs-gui",
       "babylonjs-procedural-textures",
       "babylonjs-post-process",
-      "babylonjs-materials"	
+      "babylonjs-materials",
+	  "typescript-collections"
     ]
   }
 }
