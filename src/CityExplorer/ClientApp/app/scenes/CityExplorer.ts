@@ -237,40 +237,146 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         setTimeout(() => { this.updateSkyboxSettings(); }, timeout);
     }
 
-    private fixTextures(): void {
-        let textures = new Collections.Dictionary<string, Collections.Set<string>>();
+    private fixDupMaterials(): void {
+        //
+        //  build the maps for the dup materials
+        //
+        class MaterialInfo {
+            constructor(sm: BABYLON.StandardMaterial) {
+                this.main = sm;
+                this.dups = new Collections.Dictionary<string, BABYLON.StandardMaterial>();
+            }
+
+            main: BABYLON.StandardMaterial;
+            dups: Collections.Dictionary<string, BABYLON.StandardMaterial>;
+        }
+
+        let textureMap = new Collections.Dictionary<string, MaterialInfo>();
+        let materialMap = new Collections.Dictionary<string, BABYLON.StandardMaterial>();
+
         let matNo = 1;
+        for (let material of this.scene.materials) {
+            if (material instanceof BABYLON.StandardMaterial) {
+                if (material.diffuseTexture) {
+                    let materialName = material.name;
+                    let textureName = material.diffuseTexture.name;
+                    console.log(`** material: no=${matNo++}, mat=${materialName}, texture=${textureName}`);
 
-        for (let m of this.scene.materials) {
-            if (m instanceof BABYLON.StandardMaterial) {
-                if (m.diffuseTexture) {
-                    let texture = m.diffuseTexture.name;
-
-                    console.log(`** material: no=${matNo++}, mat=${m.name}, texture=${texture}`);
-
-                    if (!textures.containsKey(texture)) {
-                        console.log(`>> creating entry for texture=${texture}`);
-                        textures.setValue(texture, new Collections.Set<string>());
+                    if (!textureMap.containsKey(textureName)) {
+                        let materialInfo = new MaterialInfo(material);
+                        //console.log(`>> creating entry for texture=${texture}`);
+                        textureMap.setValue(textureName, materialInfo);
                     }
+                    else {
+                        let materialInfo = textureMap.getValue(textureName);
+                        if (!materialInfo.dups.containsKey(materialName)) {
+                            //console.log(`>> adding mat=${material}, texture=${texture}`);
+                            materialInfo.dups.setValue(materialName, material);
+                        }
 
-                    let mats: Collections.Set<string> = textures.getValue(texture);
-                    if (!mats.contains(m.name)) {
-                        console.log(`>> adding mat=${m.name}, texture=${texture}`);
-                        mats.add(m.name);
+                        materialMap.setValue(materialName, materialInfo.main);
                     }
-
                 }
             }
         }
 
-        textures.forEach((texture: string, mats: Collections.Set<string>) => {
+        let dupCount = 0;
+        textureMap.forEach((texture: string, materialInfo: MaterialInfo) => {
             console.log(`**** texture=${texture}`);
-            let matArray = mats.toArray();
-            for (let m of matArray) {
-                console.log(`    mat=${m}`);
-            
-            }
+            console.log(`    main-mat=${materialInfo.main.name}`);
+
+            materialInfo.dups.forEach((name: string, sm: BABYLON.StandardMaterial) => {
+                console.log(`    dup-mat=${sm.name}, dup-texture=${sm.diffuseTexture.name}`);
+                dupCount++;
+            });
         });
+
+        console.log(`dupCount=${dupCount}`);
+
+        //
+        //  fix mesh's material to point to the main materials
+        //
+        let replaceCount = 0;
+        for (let mesh of this.scene.meshes) {
+            if (mesh.material && mesh.material.name) {
+                //console.log(`**** mesh: name=${mesh.name}, material=${mesh.material.name}`);
+                let materialName = mesh.material.name;
+                if (materialMap.containsKey(materialName)) {
+                    let mainMaterial = materialMap.getValue(materialName);
+                    if (mesh.material.name !== mainMaterial.name) {
+                        console.log(`replacing dup-material: from=${mesh.material.name} to=${mainMaterial.name}`);
+                        mesh.material = mainMaterial;
+                        replaceCount++;
+                    }
+                }
+            }
+        }
+        console.log(`replaceCount=${replaceCount}`);
+
+        //
+        //  dispose dup materials
+        //
+        textureMap.forEach((texture: string, materialInfo: MaterialInfo) => {
+            //console.log(`**** texture=${texture}`);
+            //console.log(`    main-mat=${materialInfo.main.name}`);
+            materialInfo.dups.forEach((name: string, sm: BABYLON.StandardMaterial) => {
+                console.log(`**** disposing dup-mat=${sm.name}, dup-texture=${sm.diffuseTexture.name}`);
+                sm.diffuseTexture.dispose();
+                sm.dispose();
+            });
+        });
+    }
+
+    /**
+     * 5. Get camera's looking direction according to it's location in 3D
+     */
+    private vecToLocal(vector: BABYLON.Vector3, cam: BABYLON.Camera): BABYLON.Vector3 {
+        var m = cam.getWorldMatrix();
+        var v = BABYLON.Vector3.TransformCoordinates(vector, m);
+		return v;
+    }
+
+    private checkCollisions(): boolean {
+        let status = false;
+         /**
+         * 4. In which direction camera is looking?
+         */
+        let camera = this.vrHelper.currentVRCamera;
+        //let origin = camera.position;
+        let origin = this.vrHelper.webVRCamera.devicePosition;
+
+        let forward = new BABYLON.Vector3(0, 0, 1);
+        forward = this.vecToLocal(forward, camera);
+
+	    let direction = forward.subtract(origin);
+	    direction = BABYLON.Vector3.Normalize(direction);
+
+        let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
+        let dir = rot.toEulerAngles();
+        //let dir = new BABYLON.Vector3(rot.x, rot.y, rot.z);
+
+        /**
+         * 6. Create a ray in that direction
+         */
+	    //let ray = new BABYLON.Ray(origin, direction);
+	    //let ray = new BABYLON.Ray(origin, direction);
+	    let ray = new BABYLON.Ray(origin, dir);
+
+
+        /**
+         * 7. Get the picked mesh and the distance
+         */
+        let hit = this.scene.pickWithRay(ray, (mesh: BABYLON.AbstractMesh) => { return true; });
+        if (hit.pickedMesh) {
+           let dist = hit.pickedMesh.position.subtract(camera.position).length();
+           //let dist = BABYLON.Vector3.Distance(origin, hit.pickedMesh.position)
+           console.log(`**** hit: mesh=${hit.pickedMesh.name}, dist=${dist}`);
+           if (dist <= 20) {
+               status = true;
+           }
+	    }
+
+        return status;
     }
 
     protected onStart(): void {
@@ -321,7 +427,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
             }
 
-            this.fixTextures();
+            this.fixDupMaterials();
         });
 
         this.createSkybox();
@@ -350,6 +456,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             this.vrHelper.currentVRCamera.position.y -= deltaY;
             this.vrHelper.currentVRCamera.position.x += deltaX;
             this.vrHelper.currentVRCamera.position.z += deltaZ;
+
+            //this.checkCollisions();
         }
 
 

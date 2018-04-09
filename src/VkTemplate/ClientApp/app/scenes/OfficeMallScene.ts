@@ -174,13 +174,13 @@ export class OfficeMallScene extends FirstScene implements EventListenerObject {
                 }
 
                 m.isPickable = true;
-                if (!m.name.startsWith("Facade")) {
+                if (m.name.startsWith("Floor") || m.name.startsWith("Roof")) {
                     // add to teleport mesh
                     BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
                     this.vrHelper.addFloorMesh(<BABYLON.Mesh>m);
                 }
                 else {
-                    BABYLON.Tools.Log(`mesh: name=${m.name}`);
+                    //BABYLON.Tools.Log(`mesh: name=${m.name}`);
                 }
             }
 
