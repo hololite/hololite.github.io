@@ -57,6 +57,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private skyboxMaterial: BABYLON.SkyMaterial = null;
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
+    private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
 
     /*
     * Public members
@@ -237,6 +238,87 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         setTimeout(() => { this.updateSkyboxSettings(); }, timeout);
     }
 
+    private createTextureFromAtlas(atlas: BABYLON.Texture, name: string, x: number, y: number, w: number, h: number, aw: number, ah: number): BABYLON.Texture {
+        let texture = atlas.clone();
+        texture.name = name;
+
+        texture.uScale = w / aw;
+        texture.vScale = h / ah;
+
+        texture.uOffset = x / aw;
+        texture.vOffset = (ah - y - h) / ah;
+        //texture.uOffset = ( aw /2 - x)/w - 0.5
+	    //texture.vOffset = (-ah/2 + y)/h + 0.5
+
+        return texture;
+    }
+
+    private buildTextureAtlas(atlasFile: string, atlasConfigFile: string): void {
+        console.log('>>>> buildTextureAtlas');
+        console.log(`atlasFile=${atlasFile}`);
+        console.log(`atlasConfigFile=${atlasConfigFile}`);
+
+        interface TextureFrame {
+            filename: string;
+            frame: { x: number; y: number; w: number; h: number };
+        }
+        interface AtlasConfig {
+            frames: TextureFrame[];
+            meta: {
+                size: {w: number; h: number}
+            }
+        }
+
+        let request = new XMLHttpRequest();
+        request.open('GET', atlasConfigFile, false);  // `false` for synchronous op
+        request.send(null);
+        if (request.status !== 200) {
+            throw new Error('Texture atlas config is not found');
+        }
+
+        //console.log(`json=${request.responseText}`);
+        let atlasConfig: AtlasConfig = JSON.parse(request.responseText);
+        let aw: number = atlasConfig.meta.size.w;
+        let ah: number = atlasConfig.meta.size.h;
+        console.log(`**** atlas: aw=${aw}, ah=${ah}`);
+
+        let roofAtlas = new BABYLON.Texture(atlasFile, this.scene, false, true);
+        roofAtlas.hasAlpha = true;
+        for (let textureFrame of atlasConfig.frames) {
+            let name = textureFrame.filename;
+            let x = textureFrame.frame.x;
+            let y = textureFrame.frame.y;
+            let w = textureFrame.frame.w;
+            let h = textureFrame.frame.h;
+
+            console.log(`**** texture: name=${name}, x=${x}, y=${y}, w=${w}, h=${h}`); 
+            let texture = this.createTextureFromAtlas(roofAtlas, name, x, y, w, h, aw, ah);
+            this.textureAtlas.setValue(name, texture);
+        }
+
+        console.log('<<<< buildTextureAtlas');
+    }
+
+    private buildTextureAtlases(): void {
+        // roof texture atlas
+        this.buildTextureAtlas(
+            'assets/scenes/babylonjs/city/RoofTextureAtlas.png',
+            'assets/scenes/babylonjs/city/RoofTextureAtlas.json'
+            );
+
+        // flat roof texture atlas
+        this.buildTextureAtlas(
+            'assets/scenes/babylonjs/city/FlatTextureAtlas.png',
+            'assets/scenes/babylonjs/city/FlatTextureAtlas.json'
+            );
+
+        // facade texture atlas
+        this.buildTextureAtlas(
+            'assets/scenes/babylonjs/city/FacadeTextureAtlas.png',
+            'assets/scenes/babylonjs/city/FacadeTextureAtlas.json'
+            );
+    }
+
     private fixDupMaterials(): void {
         //
         //  build the maps for the dup materials
@@ -252,6 +334,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         }
 
         let textureMap = new Collections.Dictionary<string, MaterialInfo>();
+
+        // material which is in this map is a dup material
+        // this map returns the main (non-dup) material 
+        // main material is *not* in this map
         let materialMap = new Collections.Dictionary<string, BABYLON.StandardMaterial>();
 
         let matNo = 1;
@@ -260,9 +346,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 if (material.diffuseTexture) {
                     let materialName = material.name;
                     let textureName = material.diffuseTexture.name;
-                    console.log(`** material: no=${matNo++}, mat=${materialName}, texture=${textureName}`);
+                    //console.log(`** material: no=${matNo++}, mat=${materialName}, texture=${textureName}`);
 
                     if (!textureMap.containsKey(textureName)) {
+                        // the first found material becomes the main material
                         let materialInfo = new MaterialInfo(material);
                         //console.log(`>> creating entry for texture=${texture}`);
                         textureMap.setValue(textureName, materialInfo);
@@ -282,16 +369,30 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
         let dupCount = 0;
         textureMap.forEach((texture: string, materialInfo: MaterialInfo) => {
-            console.log(`**** texture=${texture}`);
-            console.log(`    main-mat=${materialInfo.main.name}`);
+            //console.log(`**** texture=${texture}`);
+            //console.log(`    main-mat=${materialInfo.main.name}`);
 
             materialInfo.dups.forEach((name: string, sm: BABYLON.StandardMaterial) => {
-                console.log(`    dup-mat=${sm.name}, dup-texture=${sm.diffuseTexture.name}`);
+                //console.log(`    dup-mat=${sm.name}, dup-texture=${sm.diffuseTexture.name}`);
                 dupCount++;
             });
         });
 
         console.log(`dupCount=${dupCount}`);
+
+        // iterate unique textures and correponding materials
+        let uniqueCount = 0;
+        textureMap.forEach((textureName: string, materialInfo: MaterialInfo) => {
+            console.log(`**** unique texture=${textureName}, material=${materialInfo.main.name}`);
+            let texture = this.textureAtlas.getValue(textureName); // texture from atlas
+            if (texture) {
+                console.log(`**** replacing texture=${materialInfo.main.diffuseTexture.name} with atlasTexture=${texture.name}`);
+                materialInfo.main.diffuseTexture.dispose();
+                materialInfo.main.diffuseTexture = texture;
+            }
+            uniqueCount++;
+        });
+        console.log(`**** uniqueCount=${uniqueCount}`);
 
         //
         //  fix mesh's material to point to the main materials
@@ -301,13 +402,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             if (mesh.material && mesh.material.name) {
                 //console.log(`**** mesh: name=${mesh.name}, material=${mesh.material.name}`);
                 let materialName = mesh.material.name;
-                if (materialMap.containsKey(materialName)) {
-                    let mainMaterial = materialMap.getValue(materialName);
-                    if (mesh.material.name !== mainMaterial.name) {
-                        console.log(`replacing dup-material: from=${mesh.material.name} to=${mainMaterial.name}`);
-                        mesh.material = mainMaterial;
-                        replaceCount++;
-                    }
+                let mainMaterial = materialMap.getValue(materialName);
+                if (mainMaterial) {
+                    //console.log(`replacing dup-material: from=${mesh.material.name} to=${mainMaterial.name}`);
+                    mesh.material = mainMaterial;
+                    replaceCount++;
                 }
             }
         }
@@ -316,15 +415,18 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         //
         //  dispose dup materials
         //
+        let disposeCount = 0;
         textureMap.forEach((texture: string, materialInfo: MaterialInfo) => {
             //console.log(`**** texture=${texture}`);
             //console.log(`    main-mat=${materialInfo.main.name}`);
             materialInfo.dups.forEach((name: string, sm: BABYLON.StandardMaterial) => {
-                console.log(`**** disposing dup-mat=${sm.name}, dup-texture=${sm.diffuseTexture.name}`);
+                //console.log(`**** disposing dup-mat=${sm.name}, dup-texture=${sm.diffuseTexture.name}`);
                 sm.diffuseTexture.dispose();
                 sm.dispose();
+                disposeCount++;
             });
         });
+        console.log(`**** disposeCount=${disposeCount}`);
     }
 
     /**
@@ -427,7 +529,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
             }
 
-            this.fixDupMaterials();
+            //this.buildTextureAtlases();
+            //this.fixDupMaterials();
         });
 
         this.createSkybox();
