@@ -481,6 +481,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         return status;
     }
 
+    private optimizeScene(): void {
+        this.scene.autoClear = false; // Color buffer
+        this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
+    }
+
     protected onStart(): void {
         /*
         let black =  BABYLON.Color3.Black();
@@ -531,6 +536,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             //this.buildTextureAtlases();
             //this.fixDupMaterials();
+            this.optimizeScene();
         });
 
         this.createSkybox();
@@ -579,6 +585,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             }
         });
         */
+
     }
 
     protected onStop(): void {
