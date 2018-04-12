@@ -1,0 +1,102 @@
+{"frames": [
+
+{
+	"filename": "flatro0.jpg",
+	"frame": {"x":2435,"y":0,"w":1024,"h":697},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":697},
+	"sourceSize": {"w":1024,"h":697},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro1.jpg",
+	"frame": {"x":0,"y":0,"w":1411,"h":961},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1411,"h":961},
+	"sourceSize": {"w":1411,"h":961},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro2.jpg",
+	"frame": {"x":0,"y":961,"w":1024,"h":757},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":757},
+	"sourceSize": {"w":1024,"h":757},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro3.jpg",
+	"frame": {"x":1411,"y":0,"w":1024,"h":757},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":757},
+	"sourceSize": {"w":1024,"h":757},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro4.jpg",
+	"frame": {"x":1411,"y":757,"w":1024,"h":697},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":697},
+	"sourceSize": {"w":1024,"h":697},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro5.jpg",
+	"frame": {"x":0,"y":1718,"w":1024,"h":757},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":757},
+	"sourceSize": {"w":1024,"h":757},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro6.jpg",
+	"frame": {"x":2435,"y":1024,"w":1024,"h":697},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":697},
+	"sourceSize": {"w":1024,"h":697},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro7.jpg",
+	"frame": {"x":2048,"y":2048,"w":1024,"h":706},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":706},
+	"sourceSize": {"w":1024,"h":706},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro8.jpg",
+	"frame": {"x":1024,"y":2211,"w":1024,"h":655},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":655},
+	"sourceSize": {"w":1024,"h":655},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "flatro9.jpg",
+	"frame": {"x":1024,"y":1454,"w":1024,"h":757},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1024,"h":757},
+	"sourceSize": {"w":1024,"h":757},
+	"pivot": {"x":0.5,"y":0.5}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "FlatTextureAtlas.png",
+	"format": "RGBA8888",
+	"size": {"w":3132,"h":2866},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ca4647bca963df33734e3b26e2a3f5dc:5793dd17057c5c484c7675c6f2ed097c:5e0f60755ecb7dacb75917fbb5003f43$"
+}
+}
