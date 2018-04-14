@@ -58,6 +58,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
+    private optimizeScene = false;
+    private speed = 0.05;
 
     /*
     * Public members
@@ -481,11 +483,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         return status;
     }
 
-    private optimizeScene(): void {
-        this.scene.autoClear = false; // Color buffer
-        this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
-    }
-
     protected onStart(): void {
         /*
         let black =  BABYLON.Color3.Black();
@@ -525,7 +522,13 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             this.meshes = container.meshes;
 
             for (let m of this.meshes) {
-                m.isPickable = true;
+                if (this.optimizeScene) {
+                    m.freezeWorldMatrix();
+                    m.alwaysSelectAsActiveMesh = false;
+                    m.material.freeze();
+                    (<BABYLON.Mesh>m).convertToUnIndexedMesh();
+                }
+
                 if (!m.name.startsWith("Facade")) {
                     // add to teleport mesh
                     //BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
@@ -540,9 +543,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
             }
 
-            //this.buildTextureAtlases();
-            //this.fixDupMaterials();
-            this.optimizeScene();
+            if (this.optimizeScene) {
+                //this.buildTextureAtlases();
+                //this.fixDupMaterials();
+                this.scene.autoClear = false; // Color buffer
+                this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
+            }
         });
 
         this.createSkybox();
@@ -559,13 +565,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         //  headset orientation determines the movement of its position
         //
         this.beforeRenderCallback = () => {
-            let radius = 0.03;
             let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
 
             //console.log(`x=${rot.x}, y=${rot.y}, z=${rot.z}`);
-            let deltaY = radius * Math.sin(rot.x * Math.PI);
-            let deltaZ = radius * Math.cos(rot.y * Math.PI);
-            let deltaX = radius * Math.sin(rot.y * Math.PI);
+            let deltaY = this.speed * Math.sin(rot.x * Math.PI);
+            let deltaZ = this.speed * Math.cos(rot.y * Math.PI);
+            let deltaX = this.speed * Math.sin(rot.y * Math.PI);
             deltaY = (deltaY < 0) ? deltaY*7 : deltaY;  // make moving up faster than moving down
 
             this.vrHelper.currentVRCamera.position.y -= deltaY;

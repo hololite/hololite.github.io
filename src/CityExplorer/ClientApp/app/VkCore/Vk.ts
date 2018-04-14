@@ -178,8 +178,8 @@ export class VkApp {
         if (this.isVREnabled()) {
             this._vrHelper = this.scene.createDefaultVRExperience(); // this will create several (5) cameras
             //this._vrHelper.enableInteractions();
-            this._vrHelper.enableTeleportation();
-            this._vrHelper.displayGaze = true;
+            //this._vrHelper.enableTeleportation();
+            this._vrHelper.displayGaze = false;
             this._vrHelper.displayLaserPointer = false;
             this._vrHelper.webVROptions.defaultHeight = 10;
             this._vrHelper.webVROptions.rayLength = 200;
@@ -491,7 +491,7 @@ export abstract class VkScene {
     public initialize(): void {
         if (!this._initialized) {
             this.createAssets();
-            this.saveAssetsToContainer();
+            //this.saveAssetsToContainer();
             this._initialized = true;
         }
     }
@@ -577,7 +577,7 @@ export abstract class VkScene {
                 }
             }
             */
-            this.vrHelper.displayGaze = true;
+            this.vrHelper.displayGaze = false;
             //this.vrHelper.changeLaserColor(BABYLON.Color3.Yellow());
             this.vrHelper.displayLaserPointer = false;
             //this.vrHelper.webVROptions.defaultHeight = 2;
@@ -619,6 +619,7 @@ export abstract class VkScene {
         console.log('<<<< initializeOptions: scene=%s', this.name);
     }
 
+    /*
     private saveAssetsToContainer(): void {
         this._assets.moveAllFromScene(VkApp.instance.systemAssets);
     }
@@ -638,6 +639,7 @@ export abstract class VkScene {
             this._assetsLoaded = false;
         }
     }
+    */
 
     private clearAssetsInScene(): void {
         this.scene.cameras.length = 0;
@@ -703,7 +705,7 @@ export abstract class VkScene {
         VkApp.instance.restoreInitialSceneProperties();
 
         //VkApp.instance.traceSceneAssets('before loading assets');
-        this.loadAssetsFromContainer();  // load assets from container to scene
+        //this.loadAssetsFromContainer();  // load assets from container to scene
         this.initializeOptions();
         VkApp.instance.onMenuButton = (controller: BABYLON.WebVRController, pressed: boolean) => { this.onMenuButton(controller, pressed); };
         VkApp.instance.onTriggerButton = (controller: BABYLON.WebVRController, pressed: boolean) => { this.onTriggerButton(controller, pressed); };
@@ -732,7 +734,7 @@ export abstract class VkScene {
             this._teleportMeshes.length = 0;
         }
 
-        this.unloadAssetsFromScene();
+        //this.unloadAssetsFromScene();
 
         /*
         // the second step to add scene assets to the system assets
