@@ -58,7 +58,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
-    private opt = {optimizeMeshes: true, freezeMeshes: true, optClear: true, optTexture:false, enableLOD: false};
+    private opt = {optimizeMeshes: true, freezeMeshes: 1, optClear: true, optTexture:false, enableLOD: false};
     private speed = 0.05;
     private s1: BABYLON.SimplificationSettings = null;
     private s2: BABYLON.SimplificationSettings = null;
@@ -542,10 +542,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
                 if (this.opt.optimizeMeshes) {
                     m.parent = null;
+                    m.alwaysSelectAsActiveMesh = true;
                 }
 
-                if (this.opt.freezeMeshes) {
-                    m.alwaysSelectAsActiveMesh = this.opt.freezeMeshes;
+                if (this.opt.freezeMeshes >= 1) {
                     m.freezeWorldMatrix();
                 }
 
@@ -573,12 +573,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.scene.removeLight(defaultLight);
             }
 
-            if (this.opt.freezeMeshes) {
+            if (this.opt.freezeMeshes >= 2) {
                 this.scene.freezeActiveMeshes();
             }
+            /*
             else {
                 this.scene.unfreezeActiveMeshes();
             }
+            */
 
             if (this.opt.optimizeMeshes) {
                 // remove the root mesh

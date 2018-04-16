@@ -207,6 +207,9 @@ export class VkApp {
             */
 
             this._vrHelper.onControllerMeshLoadedObservable.add((c: BABYLON.WebVRController, eventState: BABYLON.EventState) => {
+                this.scene.createOrUpdateSelectionOctree();
+                c.mesh.unfreezeWorldMatrix();
+
                 console.log('>>>> onControllerMeshLoadedObservable');
 
                 this.hideLaserPointer();
