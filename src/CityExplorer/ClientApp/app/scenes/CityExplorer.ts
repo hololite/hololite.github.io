@@ -58,7 +58,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
-    private opt = {optimizeMeshes: false, freezeMeshes: false, optClear: false, optTexture:false, enableLOD: false};
+    private opt = {optimizeMeshes: true, freezeMeshes: true, optClear: true, optTexture:false, enableLOD: false};
     private speed = 0.05;
     private s1: BABYLON.SimplificationSettings = null;
     private s2: BABYLON.SimplificationSettings = null;
@@ -149,7 +149,9 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     }
     
     protected createAssets(): void {
-        this.light = new BABYLON.HemisphericLight("Hemi", new BABYLON.Vector3(0, 1, 0), this.scene);
+        console.log('>>>> CityExplorerScene.createAssets');
+
+        this.light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
         this.light.intensity = 2;
 
         this.decalMaterial = new BABYLON.StandardMaterial("decalMat", this.scene);
@@ -158,6 +160,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.decalMaterial.zOffset = -2;
 
         //this.menu.createAssets();
+
+        console.log('<<<< CityExplorerScene.createAssets');
     }
 
     // EventListenerObject interface method
@@ -217,14 +221,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 // afternoon
                 this.light.intensity = 0.5;
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);  // night
-                timeout = 20000;
+                timeout = 30000;
                 break;
 
             case 3:
                 // night
                 this.light.intensity = 0.2;
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5);  // night
-                timeout = 10000;
+                timeout = 30000;
                 break;
 
             case 4:
@@ -232,7 +236,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.light.intensity = 0.5;
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.4);  // morning
                 //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 0.1); // morning
-                timeout = 20000;
+                timeout = 30000;
                 break;
 
             //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 1.0); 
@@ -563,6 +567,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             }
 
             container.addAllToScene();
+            let defaultLight = this.scene.getLightByName('Default light');
+            if (defaultLight) {
+                console.log('removing default light');
+                this.scene.removeLight(defaultLight);
+            }
 
             if (this.opt.freezeMeshes) {
                 this.scene.freezeActiveMeshes();

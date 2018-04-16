@@ -133,6 +133,7 @@ export class VkApp {
         VkApp._instance = value;
     }
 
+    /*
     private copySceneProperties(source: BABYLON.Scene, target: BABYLON.Scene): void {
         target.fogColor = new BABYLON.Color3(source.fogColor.r, source.fogColor.g, source.fogColor.b);
         target.fogDensity = source.fogDensity;
@@ -155,6 +156,7 @@ export class VkApp {
     public restoreInitialSceneProperties(): void {
         this.copySceneProperties(this._initialScene, this._scene);
     }
+    */
 
     protected constructor(canvasName: string, director: IVkDirector, options?: VkAppOptions) {
         if (options === undefined) {
@@ -168,7 +170,7 @@ export class VkApp {
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene = new BABYLON.Scene(this.engine);
         this._initialScene = new BABYLON.Scene(null);    // save a copy for keeping the initial props
-        this.saveInitialSceneProperties();
+        //this.saveInitialSceneProperties();
 
         if (this._options.debugLayer) {
             this.debugPanel = true;
@@ -280,7 +282,7 @@ export class VkApp {
 
         // first-step to save the initial system assets related to vr
         this._systemAssets = new BABYLON.KeepAssets();
-        this.saveToSystemAssets();
+        //this.saveToSystemAssets();
         //this.traceSceneAssets('after creating free camera');
         // set the director
         this._director = director;
@@ -303,6 +305,7 @@ export class VkApp {
         }
     }
 
+    /*
     public saveToSystemAssets(): void {
         Array.prototype.push.apply(this._systemAssets.cameras, this.scene.cameras);
         Array.prototype.push.apply(this._systemAssets.meshes, this.scene.meshes);
@@ -310,6 +313,7 @@ export class VkApp {
         Array.prototype.push.apply(this._systemAssets.materials, this.scene.materials);
         Array.prototype.push.apply(this._systemAssets.lights, this.scene.lights);
     }
+    */
 
     public static get instance(): VkApp { return VkApp._instance; }
     public get options(): VkAppOptions { return this._options; }
@@ -710,8 +714,8 @@ export abstract class VkScene {
         this.initialize();  // one-time initialization
 
         //VkApp.instance.traceSceneAssets('before clearing assets');
-        this.clearAssetsInScene(); // clear assets in scene except the system assets
-        VkApp.instance.restoreInitialSceneProperties();
+        //this.clearAssetsInScene(); // clear assets in scene except the system assets
+        //VkApp.instance.restoreInitialSceneProperties();
 
         //VkApp.instance.traceSceneAssets('before loading assets');
         //this.loadAssetsFromContainer();  // load assets from container to scene
