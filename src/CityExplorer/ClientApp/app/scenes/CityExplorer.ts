@@ -533,6 +533,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.s3 = new BABYLON.SimplificationSettings(0.5, 100, true);
             }
 
+            container.addAllToScene();
+
             for (let am of this.meshes) {
                 let m = <BABYLON.Mesh>am;
 
@@ -543,6 +545,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 if (this.opt.optimizeMeshes) {
                     m.parent = null;
                     m.alwaysSelectAsActiveMesh = true;
+                    m.convertToUnIndexedMesh();
                 }
 
                 if (this.opt.freezeMeshes >= 1) {
@@ -566,7 +569,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 */
             }
 
-            container.addAllToScene();
             let defaultLight = this.scene.getLightByName('Default light');
             if (defaultLight) {
                 console.log('removing default light');
