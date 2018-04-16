@@ -58,8 +58,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
-    private optimizeScene = false;
+    private opt = {optimizeMeshes: false, freezeMeshes: false, optClear: false, optTexture:false, enableLOD: false};
     private speed = 0.05;
+    private s1: BABYLON.SimplificationSettings = null;
+    private s2: BABYLON.SimplificationSettings = null;
+    private s3: BABYLON.SimplificationSettings = null;
 
     /*
     * Public members
@@ -90,7 +93,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.scene,
                 () => {},
                 {
-                    loop: true, autoplay: true, volume: 0.5, spatialSound: true, distanceModel: "linear"
+                    loop: true, autoplay: true, volume: 0.7, spatialSound: true, distanceModel: "linear"
                 }
             );
 
@@ -98,7 +101,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             this.sound3D.setPosition(new BABYLON.Vector3(0, 100, 0));
 
             // Set 3D sound's max distance (linear model)
-            this.sound3D.maxDistance = 1000;
+            this.sound3D.maxDistance = 5000;
         }
     }
 
@@ -518,15 +521,32 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 meshes=${container.meshes.length}, mat=${container.materials.length}, textr=${container.textures.length}, transnodes=${container.transformNodes.length}, shadowgen=${container.shadowGenerators.length},
                 particles=${container.particleSystems.length}, morph=${container.morphTargetManagers.length}, animGroup=${container.animationGroups.length}, effectLayers=${container.effectLayers.length},
                 lens=${container.lensFlareSystems.length}, action=${container.actionManagers.length}, sounds=${container.sounds.length}, multi-mat=${container.multiMaterials.length}, anim=${container.animations.length}, skelt=${container.skeletons.length}`);
-            container.addAllToScene();
             this.meshes = container.meshes;
 
-            for (let m of this.meshes) {
-                if (this.optimizeScene) {
+            if (this.opt.enableLOD) {
+                this.s1 = new BABYLON.SimplificationSettings(0.9, 40, true);
+                this.s2 = new BABYLON.SimplificationSettings(0.7, 60, true);
+                this.s3 = new BABYLON.SimplificationSettings(0.5, 100, true);
+            }
+
+            for (let am of this.meshes) {
+                let m = <BABYLON.Mesh>am;
+
+                //let submeshesCount = m.subMeshes ? m.subMeshes.length : 0;
+                //let childCount = m.getChildMeshes() ? m.getChildMeshes(true).length : 0;
+                //console.log(`mesh: name=${m.name}, submeshes=${submeshesCount}, children=${childCount}`);
+
+                if (this.opt.optimizeMeshes) {
+                    m.parent = null;
+                }
+
+                if (this.opt.freezeMeshes) {
+                    m.alwaysSelectAsActiveMesh = this.opt.freezeMeshes;
                     m.freezeWorldMatrix();
-                    m.alwaysSelectAsActiveMesh = false;
-                    m.material.freeze();
-                    (<BABYLON.Mesh>m).convertToUnIndexedMesh();
+                }
+
+                if (this.opt.enableLOD) {
+                    m.simplify([this.s1, this.s2, this.s3], false, BABYLON.SimplificationType.QUADRATIC);
                 }
 
                 if (!m.name.startsWith("Facade")) {
@@ -534,20 +554,40 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     //BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
                     this.vrHelper.addFloorMesh(<BABYLON.Mesh>m);
                 }
-                else {
-                    //BABYLON.Tools.Log(`mesh: name=${m.name}`);
+
+                /* 
+                if (this.loaderOptions.scale !== 1) {
+                    this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
                 }
+                */
             }
 
-            if (this.loaderOptions.scale !== 1) {
-                this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
+            container.addAllToScene();
+
+            if (this.opt.freezeMeshes) {
+                this.scene.freezeActiveMeshes();
+            }
+            else {
+                this.scene.unfreezeActiveMeshes();
             }
 
-            if (this.optimizeScene) {
+            if (this.opt.optimizeMeshes) {
+                // remove the root mesh
+                let root = this.scene.getMeshByName("RootNode");
+                root.isVisible = false;
+                console.log(`root mesh removed: index=${this.scene.removeMesh(root)}`);
+                // use oct tree
+                this.scene.createOrUpdateSelectionOctree();
+            }
+
+            if (this.opt.optClear) {
+                this.scene.autoClear = false; // color buffer
+                this.scene.autoClearDepthAndStencil = false; // depth and stencil buffer
+            }
+
+            if (this.opt.optTexture) {
                 //this.buildTextureAtlases();
-                //this.fixDupMaterials();
-                this.scene.autoClear = false; // Color buffer
-                this.scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
+                this.fixDupMaterials();
             }
         });
 

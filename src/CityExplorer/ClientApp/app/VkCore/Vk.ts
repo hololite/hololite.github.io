@@ -39,6 +39,7 @@ export class VkApp {
     private _onTouchpadButton: (nav: TouchpadNav) => void = null;
     private lastTouchpadNav: TouchpadNav = TouchpadNav.None;
     private lastTouchpadTime: number = 0;
+    private debugPanel = false;
 
     private menuButtonObserver(controller: BABYLON.WebVRController, eventState: BABYLON.EventState): void {
         //console.log('>>>> VkApp.menuButtonObserver: mask=%d', eventState.mask);
@@ -170,6 +171,7 @@ export class VkApp {
         this.saveInitialSceneProperties();
 
         if (this._options.debugLayer) {
+            this.debugPanel = true;
             this._scene.debugLayer.show();
         }
         
@@ -247,6 +249,13 @@ export class VkApp {
             // key-based navigation
             // this should work in both pre-vr mode and vr mode
             document.onkeydown = (e)=> {
+                if (e.key === "d") {
+                    this.debugPanel = !this.debugPanel;
+                    if (this.debugPanel)
+                        this._scene.debugLayer.show();
+                    else
+                        this._scene.debugLayer.hide();
+                }
                 if (e.key === "Up") { // forward
                     this.vrHelper.currentVRCamera.position.z += 0.6; 
                 }

@@ -4,7 +4,7 @@ import { Director } from './Director'
 
 export class App extends VkApp {
     private constructor() {
-        let options: VkAppOptions = { enableVR: true, debugLayer: true };
+        let options: VkAppOptions = { enableVR: true, debugLayer: false };
 
         super(Common.canvasName, new Director(), options);
 	}
