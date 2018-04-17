@@ -44,7 +44,20 @@ class CityExplorerOptions implements ICityExplorerOptions {
 }
 
 export class CityExplorerScene extends FirstScene implements EventListenerObject {
-    private light: BABYLON.HemisphericLight = null;
+    private readonly opt = {
+        optimizeMeshes: true,
+        freezeMeshes: 1,
+        optClear: true,
+        optTexture: false,
+        enableLOD: false
+    };
+
+    private settings = {
+        enableShadows: false 
+    };
+
+    private hemiLight: BABYLON.HemisphericLight = null;
+    private light: BABYLON.DirectionalLight = null;
     private menu: VkMenu = new VkMenu(this);
     private decals: BABYLON.Mesh[] = [];
     private decalMaterial: BABYLON.StandardMaterial;
@@ -58,12 +71,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
-    private opt = {optimizeMeshes: true, freezeMeshes: 1, optClear: true, optTexture:false, enableLOD: false};
     private speed = 3;  // units per sec 
     private s1: BABYLON.SimplificationSettings = null;
     private s2: BABYLON.SimplificationSettings = null;
     private s3: BABYLON.SimplificationSettings = null;
     private lastRenderCallback: number = 0;
+    private shadowGenerator: BABYLON.ShadowGenerator = null;
 
     /*
     * Public members
@@ -99,7 +112,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             );
 
             // Set 3D sound's position
-            this.sound3D.setPosition(new BABYLON.Vector3(0, 100, 0));
+            this.sound3D.setPosition(new BABYLON.Vector3(0, 150, 0));
 
             // Set 3D sound's max distance (linear model)
             this.sound3D.maxDistance = 5000;
@@ -152,8 +165,23 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     protected createAssets(): void {
         console.log('>>>> CityExplorerScene.createAssets');
 
-        this.light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
-        this.light.intensity = 2;
+        this.hemiLight = new BABYLON.HemisphericLight("DirLight", new BABYLON.Vector3(0, 1, 0), this.scene);
+        this.hemiLight.intensity = 0.9;
+
+        this.light = new BABYLON.DirectionalLight("DirLight", new BABYLON.Vector3(-1, 1, -1), this.scene);
+        this.light.intensity = 1.5;
+
+        if (this.settings.enableShadows) {
+            this.shadowGenerator = new BABYLON.ShadowGenerator(2*1024, this.light);
+            this.shadowGenerator.useBlurExponentialShadowMap = true;
+            this.shadowGenerator.setDarkness(0.3);
+            //this.shadowGenerator.bias = 0.00001;
+            //this.shadowGenerator.normalBias = 0.01;
+            //this.shadowGenerator.useContactHardeningShadow = true;
+            //this.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
+            //this.shadowGenerator.useKernelBlur = true;
+            //this.shadowGenerator.blurKernel = 64;
+        }
 
         this.decalMaterial = new BABYLON.StandardMaterial("decalMat", this.scene);
         this.decalMaterial.diffuseTexture = new BABYLON.Texture("assets/textures/impact.png", this.scene);
@@ -211,7 +239,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         switch (this.skyboxMode) {
             case 1:
                 //noon
-                this.light.intensity = 2;
+                this.light.intensity = 1.5;
+                this.hemiLight.intensity = 0.9;
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
                 //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 1.0); 
                 console.log(`luminance=${this.skyboxMaterial.luminance}`);
@@ -221,6 +250,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             case 2:
                 // afternoon
                 this.light.intensity = 0.5;
+                this.hemiLight.intensity = 0.3;
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);  // night
                 timeout = 30000;
                 break;
@@ -228,6 +258,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             case 3:
                 // night
                 this.light.intensity = 0.2;
+                this.hemiLight.intensity = 0.1;
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5);  // night
                 timeout = 30000;
                 break;
@@ -235,6 +266,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             case 4:
                 // morning
                 this.light.intensity = 0.5;
+                this.hemiLight.intensity = 0.3;
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.4);  // morning
                 //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 0.1); // morning
                 timeout = 30000;
@@ -565,10 +597,18 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     m.simplify([this.s1, this.s2, this.s3], false, BABYLON.SimplificationType.QUADRATIC);
                 }
 
-                if (!m.name.startsWith("Facade")) {
+                if (m.name.startsWith("Facade") || m.name.startsWith("RoofPla")) {
+                    if (this.settings.enableShadows) {
+                        this.shadowGenerator.addShadowCaster(m);
+                    }
+                }
+                else {
                     // add to teleport mesh
                     //BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
-                    this.vrHelper.addFloorMesh(<BABYLON.Mesh>m);
+                    this.vrHelper.addFloorMesh(m);
+                    if (this.settings.enableShadows) {
+                        m.receiveShadows = true;
+                    }
                 }
 
                 /* 
@@ -576,6 +616,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
                 }
                 */
+
             }
 
             if (this.opt.freezeMeshes >= 2) {
