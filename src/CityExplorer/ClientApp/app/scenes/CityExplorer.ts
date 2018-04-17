@@ -59,10 +59,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
     private opt = {optimizeMeshes: true, freezeMeshes: 1, optClear: true, optTexture:false, enableLOD: false};
-    private speed = 0.05;
+    private speed = 3;  // units per sec 
     private s1: BABYLON.SimplificationSettings = null;
     private s2: BABYLON.SimplificationSettings = null;
     private s3: BABYLON.SimplificationSettings = null;
+    private lastRenderCallback: number = 0;
 
     /*
     * Public members
@@ -535,6 +536,15 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             container.addAllToScene();
 
+            let defaultLight = this.scene.getLightByName('Default light');
+            if (defaultLight) {
+                console.log('removing default light');
+                this.scene.removeLight(defaultLight);
+            }
+            else {
+                console.log('cannot find default light');
+            }
+
             for (let am of this.meshes) {
                 let m = <BABYLON.Mesh>am;
 
@@ -545,7 +555,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 if (this.opt.optimizeMeshes) {
                     m.parent = null;
                     m.alwaysSelectAsActiveMesh = true;
-                    m.convertToUnIndexedMesh();
                 }
 
                 if (this.opt.freezeMeshes >= 1) {
@@ -567,12 +576,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
                 }
                 */
-            }
-
-            let defaultLight = this.scene.getLightByName('Default light');
-            if (defaultLight) {
-                console.log('removing default light');
-                this.scene.removeLight(defaultLight);
             }
 
             if (this.opt.freezeMeshes >= 2) {
@@ -602,6 +605,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 //this.buildTextureAtlases();
                 this.fixDupMaterials();
             }
+
         });
 
         this.createSkybox();
@@ -617,13 +621,19 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         //  logic for navigation movements based on headset orientation
         //  headset orientation determines the movement of its position
         //
+        this.lastRenderCallback = new Date().getTime();
         this.beforeRenderCallback = () => {
+            let now = new Date().getTime();
+            let elapsed = now - this.lastRenderCallback;
+            this.lastRenderCallback = now;
+
+            let inc = this.speed * elapsed / 1000.0;
             let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
 
             //console.log(`x=${rot.x}, y=${rot.y}, z=${rot.z}`);
-            let deltaY = this.speed * Math.sin(rot.x * Math.PI);
-            let deltaZ = this.speed * Math.cos(rot.y * Math.PI);
-            let deltaX = this.speed * Math.sin(rot.y * Math.PI);
+            let deltaY = inc * Math.sin(rot.x * Math.PI);
+            let deltaZ = inc * Math.cos(rot.y * Math.PI);
+            let deltaX = inc * Math.sin(rot.y * Math.PI);
             deltaY = (deltaY < 0) ? deltaY*7 : deltaY;  // make moving up faster than moving down
 
             this.vrHelper.currentVRCamera.position.y -= deltaY;
