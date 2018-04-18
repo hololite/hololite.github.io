@@ -112,7 +112,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             );
 
             // Set 3D sound's position
-            this.sound3D.setPosition(new BABYLON.Vector3(0, 150, 0));
+            this.sound3D.setPosition(new BABYLON.Vector3(120, 120, 30));
 
             // Set 3D sound's max distance (linear model)
             this.sound3D.maxDistance = 5000;
@@ -166,10 +166,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         console.log('>>>> CityExplorerScene.createAssets');
 
         this.hemiLight = new BABYLON.HemisphericLight("DirLight", new BABYLON.Vector3(0, 1, 0), this.scene);
-        this.hemiLight.intensity = 0.9;
-
         this.light = new BABYLON.DirectionalLight("DirLight", new BABYLON.Vector3(-1, 1, -1), this.scene);
-        this.light.intensity = 1.5;
 
         if (this.settings.enableShadows) {
             this.shadowGenerator = new BABYLON.ShadowGenerator(2*1024, this.light);
@@ -239,8 +236,13 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         switch (this.skyboxMode) {
             case 1:
                 //noon
-                this.light.intensity = 1.5;
-                this.hemiLight.intensity = 0.9;
+                this.light.intensity = 2.0;
+                this.light.direction = new BABYLON.Vector3(0.1, 0.9, 0.1);
+                this.light.diffuse = new BABYLON.Color3(1, 1, 1);
+                this.light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+
+                this.hemiLight.intensity = 0.8;
+                this.hemiLight.direction = new BABYLON.Vector3(0.1, 0.9, 0.1);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
                 //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 1.0); 
                 console.log(`luminance=${this.skyboxMaterial.luminance}`);
@@ -250,15 +252,25 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             case 2:
                 // afternoon
                 this.light.intensity = 0.5;
+                this.light.direction = new BABYLON.Vector3(0, 0.5, -1);
+                this.light.diffuse = new BABYLON.Color3(1, 0.8, 0.8);
+                this.light.specular = new BABYLON.Color3(0.5, 0.4, 0.4);
+
                 this.hemiLight.intensity = 0.3;
+                this.hemiLight.direction = new BABYLON.Vector3(0, 0.5, -1);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);  // night
                 timeout = 30000;
                 break;
 
             case 3:
                 // night
-                this.light.intensity = 0.2;
-                this.hemiLight.intensity = 0.1;
+                this.light.intensity = 0.3;
+                this.light.direction = new BABYLON.Vector3(0, 0.2, -1);
+                this.light.diffuse = new BABYLON.Color3(0.7, 0.0, 0.0);
+                this.light.specular = new BABYLON.Color3(0.7, 0.0, 0.0); // reddish highlight
+
+                this.hemiLight.intensity = 0.2;
+                this.hemiLight.direction = new BABYLON.Vector3(0, 0.2, -1);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5);  // night
                 timeout = 30000;
                 break;
@@ -266,7 +278,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             case 4:
                 // morning
                 this.light.intensity = 0.5;
+                this.light.direction = new BABYLON.Vector3(0, 0.5, -1);
+                this.light.diffuse = new BABYLON.Color3(1, 0.8, 0.8);
+                this.light.specular = new BABYLON.Color3(0.5, 0.4, 0.4);
+
                 this.hemiLight.intensity = 0.3;
+                this.hemiLight.direction = new BABYLON.Vector3(0, 0.5, -1);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.4);  // morning
                 //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 0.1); // morning
                 timeout = 30000;
