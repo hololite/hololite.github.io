@@ -272,7 +272,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.light.intensity = 0.5;
                 this.light.direction = new BABYLON.Vector3(0, 0.5, -1);
                 this.light.diffuse = new BABYLON.Color3(1, 0.8, 0.8);
-                this.light.specular = new BABYLON.Color3(0.5, 0.4, 0.4);
+                this.light.specular = new BABYLON.Color3(1, 0.5, 0.5);
+                //this.light.specular = new BABYLON.Color3(0.5, 0.4, 0.4);
 
                 this.hemiLight.intensity = 0.3;
                 this.hemiLight.direction = new BABYLON.Vector3(0, 0.5, -1);
@@ -287,7 +288,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.light.diffuse = new BABYLON.Color3(0.4, 0.0, 0.0);
                 this.light.specular = new BABYLON.Color3(0.6, 0.0, 0.0); // reddish highlight
 
-                this.hemiLight.intensity = 0.2;
+                this.hemiLight.intensity = 0.15;
                 this.hemiLight.direction = new BABYLON.Vector3(0, 0.1, -1);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5);  // night
                 timeout = 30000;
@@ -298,7 +299,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.light.intensity = 0.5;
                 this.light.direction = new BABYLON.Vector3(0, 0.5, -1);
                 this.light.diffuse = new BABYLON.Color3(1, 0.8, 0.8);
-                this.light.specular = new BABYLON.Color3(0.5, 0.4, 0.4);
+                //this.light.specular = new BABYLON.Color3(0.5, 0.4, 0.4);
+                this.light.specular = new BABYLON.Color3(1, 0.5, 0.5);
 
                 this.hemiLight.intensity = 0.3;
                 this.hemiLight.direction = new BABYLON.Vector3(0, 0.5, -1);
