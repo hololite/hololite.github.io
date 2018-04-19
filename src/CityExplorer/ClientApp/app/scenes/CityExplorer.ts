@@ -8,7 +8,7 @@ import 'babylonjs-procedural-textures'
 import 'cannon';
 import 'oimo';
 import { Common } from './../VkCore/Common'
-import { VkScene, FirstScene } from './../VkCore/Vk'
+import { VkScene, TouchpadNav, FirstScene } from './../VkCore/Vk'
 import { VkMenu } from './../VkCore/VkMenu'
 import * as Collections from 'typescript-collections'
 
@@ -18,6 +18,10 @@ export interface ICityExplorerOptions {
     soundFile?:     string;
     envDdsFile?:    string;
     scale?:         number;
+}
+
+export enum MovingMode {
+    Flying, Teleport, Menu
 }
 
 class CityExplorerOptions implements ICityExplorerOptions {
@@ -46,7 +50,7 @@ class CityExplorerOptions implements ICityExplorerOptions {
 export class CityExplorerScene extends FirstScene implements EventListenerObject {
     private readonly opt = {
         optimizeMeshes: true,
-        freezeMeshes: 1,
+        freezeMeshes: 2,
         optClear: true,
         optTexture: false,
         enableLOD: false
@@ -71,12 +75,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
-    private speed = 3;  // units per sec 
+    private speed = 3.0;  // units per sec 
     private s1: BABYLON.SimplificationSettings = null;
     private s2: BABYLON.SimplificationSettings = null;
     private s3: BABYLON.SimplificationSettings = null;
     private lastRenderCallback: number = 0;
     private shadowGenerator: BABYLON.ShadowGenerator = null;
+    private movingMode = MovingMode.Flying;
+    private savedMovingMode: MovingMode;
 
     /*
     * Public members
@@ -94,7 +100,19 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
     /*
     protected onMenuButton(controller: BABYLON.WebVRController, pressed: boolean) {
-        this.menu.handleMenuButton(controller, pressed);
+        console.log('>>>> onMenuButton');
+
+        if (this.menu.handleMenuButton(controller, pressed)) {
+            // menu on
+            this.savedMovingMode = this.movingMode;
+            this.movingMode = MovingMode.Menu;
+        }
+        else {
+            // menu off
+            this.movingMode = this.savedMovingMode;
+        }
+
+        console.log('<<<< onMenuButton');
     }
     */
 
@@ -185,7 +203,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.decalMaterial.diffuseTexture.hasAlpha = true;
         this.decalMaterial.zOffset = -2;
 
-        //this.menu.createAssets();
+        this.menu.createAssets();
 
         console.log('<<<< CityExplorerScene.createAssets');
     }
@@ -265,12 +283,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             case 3:
                 // night
                 this.light.intensity = 0.3;
-                this.light.direction = new BABYLON.Vector3(0, 0.2, -1);
-                this.light.diffuse = new BABYLON.Color3(0.7, 0.0, 0.0);
-                this.light.specular = new BABYLON.Color3(0.7, 0.0, 0.0); // reddish highlight
+                this.light.direction = new BABYLON.Vector3(0, 0.1, -1);
+                this.light.diffuse = new BABYLON.Color3(0.4, 0.0, 0.0);
+                this.light.specular = new BABYLON.Color3(0.6, 0.0, 0.0); // reddish highlight
 
                 this.hemiLight.intensity = 0.2;
-                this.hemiLight.direction = new BABYLON.Vector3(0, 0.2, -1);
+                this.hemiLight.direction = new BABYLON.Vector3(0, 0.1, -1);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5);  // night
                 timeout = 30000;
                 break;
@@ -670,7 +688,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.updateSkyboxSettings();
 
         this.createSound();
-        //this.menu.start();
+        this.menu.start();
 
         // for browser interaction using mouse click
         this.canvas.addEventListener("pointerdown", this, false);
@@ -680,24 +698,29 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         //  headset orientation determines the movement of its position
         //
         this.lastRenderCallback = new Date().getTime();
+
         this.beforeRenderCallback = () => {
-            let now = new Date().getTime();
-            let elapsed = now - this.lastRenderCallback;
-            this.lastRenderCallback = now;
+            if (this.movingMode === MovingMode.Flying) {
+                let now = new Date().getTime();
+                let elapsed = now - this.lastRenderCallback;
+                this.lastRenderCallback = now;
 
-            let inc = this.speed * elapsed / 1000.0;
-            let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
+                let inc = this.speed * elapsed / 1000.0;
+                let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
 
-            //console.log(`x=${rot.x}, y=${rot.y}, z=${rot.z}`);
-            let deltaY = inc * Math.sin(rot.x * Math.PI);
-            let deltaZ = inc * Math.cos(rot.y * Math.PI);
-            let deltaX = inc * Math.sin(rot.y * Math.PI);
-            deltaY = (deltaY < 0) ? deltaY*7 : deltaY;  // make moving up faster than moving down
+                //console.log(`x=${rot.x}, y=${rot.y}, z=${rot.z}`);
+                let deltaY = inc * Math.sin(rot.x * Math.PI);
+                let deltaZ = inc * Math.cos(rot.y * Math.PI);
+                let deltaX = inc * Math.sin(rot.y * Math.PI);
+                deltaY = (deltaY < 0) ? deltaY * 7 : deltaY;  // make moving up faster than moving down
+                deltaY = -1 * deltaY;
 
-            this.vrHelper.currentVRCamera.position.y -= deltaY;
-            this.vrHelper.currentVRCamera.position.x += deltaX;
-            this.vrHelper.currentVRCamera.position.z += deltaZ;
+                if (this.vrHelper.currentVRCamera.position.y < 500 || deltaY < 0)
+                    this.vrHelper.currentVRCamera.position.y += deltaY;
 
+                this.vrHelper.currentVRCamera.position.x += deltaX;
+                this.vrHelper.currentVRCamera.position.z += deltaZ;
+            }
             //this.checkCollisions();
         }
 
@@ -718,6 +741,33 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         });
         */
 
+    }
+
+    protected onTouchpadButton(nav: TouchpadNav): void {
+        switch (nav) {
+            case TouchpadNav.Top:
+                if (this.speed < 30) {
+                    this.speed += 1.0;
+                    console.log(`**** speed=${this.speed}`);
+                }
+                break;
+
+            case TouchpadNav.Bottom:
+                if (this.speed > 1) {
+                    this.speed -= 1.0;
+                    console.log(`**** speed=${this.speed}`);
+                }
+                break;
+
+                /*
+            case TouchpadNav.Right:
+                this.vrHelper.currentVRCamera.position.y += 2;
+                break;
+            case TouchpadNav.Left:
+                this.vrHelper.currentVRCamera.position.y -= 2;
+                break;
+                */
+        }
     }
 
     protected onStop(): void {
