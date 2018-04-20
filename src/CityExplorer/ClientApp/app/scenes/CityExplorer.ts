@@ -50,7 +50,7 @@ class CityExplorerOptions implements ICityExplorerOptions {
 export class CityExplorerScene extends FirstScene implements EventListenerObject {
     private readonly opt = {
         optimizeMeshes: true,
-        freezeMeshes: 2,
+        freezeMeshes: true,
         optClear: true,
         optTexture: false,
         enableLOD: false
@@ -624,9 +624,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 if (this.opt.optimizeMeshes) {
                     m.parent = null;
                     m.alwaysSelectAsActiveMesh = true;
-                }
-
-                if (this.opt.freezeMeshes >= 1) {
                     m.freezeWorldMatrix();
                 }
 
@@ -656,7 +653,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             }
 
-            if (this.opt.freezeMeshes >= 2) {
+            if (this.opt.freezeMeshes) {
                 this.scene.freezeActiveMeshes();
             }
             /*
@@ -672,6 +669,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 console.log(`root mesh removed: index=${this.scene.removeMesh(root)}`);
                 // use oct tree
                 this.scene.createOrUpdateSelectionOctree();
+                this.scene.freezeMaterials();
             }
 
             if (this.opt.optClear) {
