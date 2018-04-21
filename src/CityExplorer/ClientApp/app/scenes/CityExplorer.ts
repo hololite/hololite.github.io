@@ -125,15 +125,15 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.scene,
                 () => {},
                 {
-                    loop: true, autoplay: true, volume: 0.7, spatialSound: true, distanceModel: "linear"
+                    loop: true, autoplay: true, volume: 0.7, spatialSound: false //, distanceModel: "linear"
                 }
             );
 
             // Set 3D sound's position
-            this.sound3D.setPosition(new BABYLON.Vector3(120, 120, 30));
+            //this.sound3D.setPosition(new BABYLON.Vector3(120, 120, 30));
 
             // Set 3D sound's max distance (linear model)
-            this.sound3D.maxDistance = 5000;
+            //this.sound3D.maxDistance = 5000;
         }
     }
 
@@ -491,6 +491,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         }
         console.log(`replaceCount=${replaceCount}`);
 
+
         //
         //  dispose dup materials
         //
@@ -507,6 +508,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         });
         console.log(`**** disposeCount=${disposeCount}`);
     }
+
 
     /**
      * 5. Get camera's looking direction according to it's location in 3D
@@ -707,19 +709,22 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
                 let inc = this.speed * elapsed / 1000.0;
                 let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
+                let dir = rot.toEulerAngles();
 
-                //console.log(`x=${rot.x}, y=${rot.y}, z=${rot.z}`);
-                let deltaY = inc * Math.sin(rot.x * Math.PI);
-                let deltaZ = inc * Math.cos(rot.y * Math.PI);
-                let deltaX = inc * Math.sin(rot.y * Math.PI);
-                deltaY = (deltaY < 0) ? deltaY * 7 : deltaY;  // make moving up faster than moving down
-                deltaY = -1 * deltaY;
+                let deltaY = inc * Math.sin(-dir.x);
+                let deltaZ = inc * Math.cos(dir.y);
+                let deltaX = inc * Math.sin(dir.y);
+                // make moving up faster than moving down
+                if (deltaY > 0) {
+                    deltaY *= 5;
+                }
 
-                if (this.vrHelper.currentVRCamera.position.y < 500 || deltaY < 0)
+                if (this.vrHelper.currentVRCamera.position.y < 1000 || deltaY < 0) {
                     this.vrHelper.currentVRCamera.position.y += deltaY;
-
+                }
                 this.vrHelper.currentVRCamera.position.x += deltaX;
                 this.vrHelper.currentVRCamera.position.z += deltaZ;
+
             }
             //this.checkCollisions();
         }

@@ -47,7 +47,7 @@ export class Director implements IVkDirector {
             new BABYLON.Vector3(120, 31, 10),
             {
                 defaultEnv: false,
-                soundFile: "assets/sdays.mp3"
+                soundFile: "assets/mskyline.mp3"
             }
         );
 
