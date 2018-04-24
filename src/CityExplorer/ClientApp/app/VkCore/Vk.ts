@@ -19,7 +19,7 @@ export class VkAppOptions {
     readonly debugLayer?:                boolean = false;
 }
 
-export enum TouchpadNav { Center, Top, Bottom, Left, Right };
+export enum TouchpadNav { None, Center, Top, Bottom, Left, Right };
 
 export class VkApp {
     private static _instance: VkApp = null;
@@ -60,7 +60,7 @@ export class VkApp {
     }
 
     private calculateTouchpadNav(): TouchpadNav {
-        let nav =  TouchpadNav.Center;
+        let nav =  TouchpadNav.None;
         let x = this.stickValues.x;
         let y = this.stickValues.y;
         //console.log(`x=${x}, y=${y}`);
@@ -70,6 +70,9 @@ export class VkApp {
         }
         else if (x >= 0.7) {
             nav = TouchpadNav.Right;
+        }
+        else if (x > -0.4 && x < 0.4 && y > -0.4 && y < 0.4) {
+            nav = TouchpadNav.Center;
         }
         else {
             if (y <= -0.5) {

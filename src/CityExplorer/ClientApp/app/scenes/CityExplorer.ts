@@ -754,7 +754,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             case TouchpadNav.Bottom:
                 if (this.speed > 0) {
-                    this.speed -= 2.5;
+                    let inc = (this.speed <= 5) ? 1.25 : 2.5;
+                    this.speed -= inc;
                     console.log(`**** speed=${this.speed}`);
                 }
                 break;
