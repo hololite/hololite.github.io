@@ -19,7 +19,7 @@ export class VkAppOptions {
     readonly debugLayer?:                boolean = false;
 }
 
-export enum TouchpadNav { Top, Bottom, Left, Right, None };
+export enum TouchpadNav { Center, Top, Bottom, Left, Right };
 
 export class VkApp {
     private static _instance: VkApp = null;
@@ -37,9 +37,9 @@ export class VkApp {
     private _triggerButtonPressed = false;
     private _onTriggerButton: (controller: BABYLON.WebVRController, pressed: boolean) => void = null; 
     private _onTouchpadButton: (nav: TouchpadNav) => void = null;
-    private lastTouchpadNav: TouchpadNav = TouchpadNav.None;
-    private lastTouchpadTime: number = 0;
     private debugPanel = false;
+    private vrDisplay: VRDisplay = null;
+    private stickValues: BABYLON.StickValues = new BABYLON.StickValues(0, 0);
 
     private menuButtonObserver(controller: BABYLON.WebVRController, eventState: BABYLON.EventState): void {
         //console.log('>>>> VkApp.menuButtonObserver: mask=%d', eventState.mask);
@@ -59,74 +59,57 @@ export class VkApp {
         //console.log('<<<< VkApp.triggerButtonObserver');
     }
 
-    private calculateTouchpadNav(x: number, y: number): TouchpadNav {
-        let nav: TouchpadNav;
+    private calculateTouchpadNav(): TouchpadNav {
+        let nav =  TouchpadNav.Center;
+        let x = this.stickValues.x;
+        let y = this.stickValues.y;
         //console.log(`x=${x}, y=${y}`);
 
-        if (y >= 0.6) {
-            if (x <= 0.1) {
-                nav = TouchpadNav.Left;
-            }
-            else {
-                nav = TouchpadNav.Bottom;
-            }
+        if (x <= -0.7) {
+            nav = TouchpadNav.Left;
         }
-        else if (y >= 0) {
-            if (x <= -0.5) {
-                nav = TouchpadNav.Left;
-            }
-            else if (x >= 0.7) {
-                nav = TouchpadNav.Bottom;
-            }
-            else {
-                nav = TouchpadNav.None;
-            }
-        }
-        else if (y >= -0.6) {
-            if (x <= -0.5) {
-                nav = TouchpadNav.Top;
-            }
-            else if (x >= 0.7) {
-                nav = TouchpadNav.Right;
-            }
-            else {
-                nav = TouchpadNav.None;
-            }
+        else if (x >= 0.7) {
+            nav = TouchpadNav.Right;
         }
         else {
-            if (x <= 0.1) {
+            if (y <= -0.5) {
                 nav = TouchpadNav.Top;
             }
-            else {
-                nav = TouchpadNav.Right;
+            else if (y >= 0.5) {
+                nav = TouchpadNav.Bottom;
             }
         }
 
         return nav;
     }
-    
-    private touchpadValueObserver(stickValue: BABYLON.StickValues, eventState: BABYLON.EventState): void {
-        //console.log('>>>> VkApp.touchpadValueObserver');
-        //let date = new Date();
-        //this.lastTouchpadTime = date.getTime();
-        this.lastTouchpadNav = this.calculateTouchpadNav(stickValue.x, stickValue.y);
-        //console.log('<<<< VkApp.touchpadValueObserver');
-    }
 
-    private touchpadButtonObserver(gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState): void {
-        //console.log(`>>>> VkApp.touchpadButtonObserver: pressed=${gamepadButton.pressed}, touched=${gamepadButton.touched}`);
-        if (gamepadButton.pressed || gamepadButton.touched) {
+    private padButtonObserver(gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState): void {
+        //console.log('>>>> VkApp.padButtonObserver');
+        //console.log(`gamepadButton: touched=${gamepadButton.touched}, pressed=${gamepadButton.pressed}, value=${gamepadButton.value}`);
+
+        if (gamepadButton.pressed) {
             if (this._onTouchpadButton) {
-                this._onTouchpadButton(this.lastTouchpadNav);
+                let nav = this.calculateTouchpadNav();
+                console.log(`nav=${nav}`);
+                this._onTouchpadButton(nav);
             }
         }
-        //console.log('<<<< VkApp.touchpadButtonObserver');
+
+        //console.log('<<<< VkApp.padButtonObserver');
     }
 
     private padStateObserver(gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState): void {
-        console.log('>>>> VkApp.padStateObserver');
-        console.log('pressed=%s, value=%d', gamepadButton.pressed, gamepadButton.value);
-        console.log('<<<< VkApp.padStateObserver');
+        //console.log('>>>> VkApp.padStateObserver');
+        //console.log(`gamepadButton: touched=${gamepadButton.touched}, pressed=${gamepadButton.pressed}, value=${gamepadButton.value}`);
+        //console.log('<<<< VkApp.padStateObserver');
+    }
+
+    private padValueObserver(stickValues: BABYLON.StickValues, eventState: BABYLON.EventState): void {
+        //console.log('>>>> VkApp.padValueObserver');
+        //console.log(`stickValues: x=${stickValues.x}, y=${stickValues.y}`);
+        this.stickValues.x = stickValues.x;
+        this.stickValues.y = stickValues.y;
+        //console.log('<<<< VkApp.padValueObserver');
     }
 
     protected static setInstance(value: VkApp): void {
@@ -192,8 +175,18 @@ export class VkApp {
                 this.hideLaserPointer();
             });
 
-            /*
             this._vrHelper.onEnteringVR.add((vrHelper: BABYLON.VRExperienceHelper, eventState: BABYLON.EventState) => {
+
+                console.log("getting active vr displays");
+                //let displays = navigator.activeVRDisplays;
+                navigator.getVRDisplays().then((displays) => {
+                    this.vrDisplay = displays[0];
+                    for (let display of displays) {
+                        console.log(`**** vrDisplay: id=${display.displayId}, name=${display.displayName}`);
+                    }
+                });
+
+                /*
                 let defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, this.scene, [vrHelper.vrDeviceOrientationCamera, vrHelper.webVRCamera, vrHelper.vrDeviceOrientationCamera]);
                 defaultPipeline.fxaaEnabled = true;
                 defaultPipeline.imageProcessing.contrast = 2.5;
@@ -203,45 +196,70 @@ export class VkApp {
                 defaultPipeline.bloomWeight = 0.05;
                 defaultPipeline.bloomScale = 0.3;
                 console.log(`**** new bloomWeight=${defaultPipeline.bloomWeight}`);
+                */
             });
-            */
 
             this._vrHelper.onControllerMeshLoadedObservable.add((c: BABYLON.WebVRController, eventState: BABYLON.EventState) => {
                 this.scene.freeActiveMeshes();
                 this.scene.createOrUpdateSelectionOctree();
 
-                console.log('>>>> onControllerMeshLoadedObservable');
+                console.log(`>>>> onControllerMeshLoadedObservable: controllerType=${c.controllerType}`);
 
                 this.hideLaserPointer();
 
-                let controller = <BABYLON.WindowsMotionController>c;
+                if (c instanceof BABYLON.WindowsMotionController) {
+                    let controller = <BABYLON.WindowsMotionController>c;
 
-                controller.onMenuButtonStateChangedObservable.add((eventData: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
-                    this.menuButtonObserver(controller, eventState);
-                });
+                    controller.onMenuButtonStateChangedObservable.add((eventData: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
+                        this.menuButtonObserver(controller, eventState);
+                    });
 
-                controller.onTriggerButtonStateChangedObservable.add((eventData: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
-                    this.triggerButtonObserver(controller, eventState);
-                });
+                    controller.onTouchpadValuesChangedObservable.add((stickValue: BABYLON.StickValues, eventState: BABYLON.EventState) => {
+                        this.padValueObserver(stickValue, eventState);
+                    });
 
-                controller.onTouchpadValuesChangedObservable.add((stickValue: BABYLON.StickValues, eventState: BABYLON.EventState) => {
-                    this.touchpadValueObserver(stickValue, eventState);
-                });
+                    controller.onTouchpadButtonStateChangedObservable.add((gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
+                        this.padButtonObserver(gamepadButton, eventState);
+                    });
 
-                controller.onTouchpadButtonStateChangedObservable.add((gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
-                    this.touchpadButtonObserver(gamepadButton, eventState);
-                });
+                    /*
+                    controller.onTrackpadValuesChangedObservable.add((stickValue: BABYLON.StickValues, eventState: BABYLON.EventState) => {
+                        this.padValueObserver(stickValue, eventState);
+                    });
 
-                /*
-                controller.onPadValuesChangedObservable.add((stickValue: BABYLON.StickValues, eventState: BABYLON.EventState) => {
-                    this.padValueObserver(stickValue, eventState);
-                });
+                    controller.onTriggerButtonStateChangedObservable.add((eventData: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
+                        this.triggerButtonObserver(controller, eventState);
+                    });
+                    */
 
-                controller.onPadStateChangedObservable.add((gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
-                    this.padStateObserver(gamepadButton, eventState);
-                });
+                }
+                else if (c instanceof BABYLON.ViveController) {
+                    let controller = <BABYLON.ViveController>c;
 
-                */
+                    controller.onMenuButtonStateChangedObservable.add((eventData: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
+                        this.menuButtonObserver(controller, eventState);
+                    });
+
+                    controller.onPadValuesChangedObservable.add((stickValue: BABYLON.StickValues, eventState: BABYLON.EventState) => {
+                        this.padValueObserver(stickValue, eventState);
+                    });
+
+                    controller.onPadStateChangedObservable.add((gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
+                        this.padButtonObserver(gamepadButton, eventState);
+                    });
+                }
+                else {
+                    let controller = c;
+
+                    controller.onPadValuesChangedObservable.add((stickValue: BABYLON.StickValues, eventState: BABYLON.EventState) => {
+                        this.padValueObserver(stickValue, eventState);
+                    });
+
+                    controller.onPadStateChangedObservable.add((gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
+                        this.padButtonObserver(gamepadButton, eventState);
+                    });
+                }
+
 
                 console.log('<<<< onControllerMeshLoadedObservable');
             });
@@ -324,6 +342,7 @@ export class VkApp {
     public get engine(): BABYLON.Engine { return this._engine; }
     public get scene(): BABYLON.Scene { return this._scene; }
     public get vrHelper(): BABYLON.VRExperienceHelper { return this._vrHelper; }
+    public get vrDevice(): VRDisplay { return this.vrDevice; }
     public get director(): IVkDirector { return this._director; }
     public get systemAssets(): BABYLON.KeepAssets { return this._systemAssets; }
     public get camera(): BABYLON.Camera {

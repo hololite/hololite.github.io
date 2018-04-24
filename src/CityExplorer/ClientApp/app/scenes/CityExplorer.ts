@@ -20,10 +20,6 @@ export interface ICityExplorerOptions {
     scale?:         number;
 }
 
-export enum MovingMode {
-    Flying, Teleport, Menu
-}
-
 class CityExplorerOptions implements ICityExplorerOptions {
     constructor(args?: ICityExplorerOptions) {
         if (args !== undefined) {
@@ -62,7 +58,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
     private hemiLight: BABYLON.HemisphericLight = null;
     private light: BABYLON.DirectionalLight = null;
-    private menu: VkMenu = new VkMenu(this);
+    //private menu: VkMenu = new VkMenu(this);
     private decals: BABYLON.Mesh[] = [];
     private decalMaterial: BABYLON.StandardMaterial;
     private meshes: BABYLON.AbstractMesh[] = null;
@@ -75,14 +71,13 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
-    private speed = 3.0;  // units per sec 
+    private speed = 5.0;  // units per sec 
     private s1: BABYLON.SimplificationSettings = null;
     private s2: BABYLON.SimplificationSettings = null;
     private s3: BABYLON.SimplificationSettings = null;
     private lastRenderCallback: number = 0;
     private shadowGenerator: BABYLON.ShadowGenerator = null;
-    private movingMode = MovingMode.Flying;
-    private savedMovingMode: MovingMode;
+    private movingMode = true;
 
     /*
     * Public members
@@ -104,12 +99,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
         if (this.menu.handleMenuButton(controller, pressed)) {
             // menu on
-            this.savedMovingMode = this.movingMode;
-            this.movingMode = MovingMode.Menu;
+            //this.savedMovingMode = this.movingMode;
+            //this.movingMode = MovingMode.Menu;
         }
         else {
             // menu off
-            this.movingMode = this.savedMovingMode;
+            //this.movingMode = this.savedMovingMode;
         }
 
         console.log('<<<< onMenuButton');
@@ -203,7 +198,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.decalMaterial.diffuseTexture.hasAlpha = true;
         this.decalMaterial.zOffset = -2;
 
-        this.menu.createAssets();
+        //this.menu.createAssets();
 
         console.log('<<<< CityExplorerScene.createAssets');
     }
@@ -563,6 +558,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     }
 
     protected onStart(): void {
+
         /*
         let black =  BABYLON.Color3.Black();
         let black4 = new BABYLON.Color4(black.r, black.g, black.b);
@@ -690,7 +686,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.updateSkyboxSettings();
 
         this.createSound();
-        this.menu.start();
+        //this.menu.start();
 
         // for browser interaction using mouse click
         this.canvas.addEventListener("pointerdown", this, false);
@@ -702,7 +698,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.lastRenderCallback = new Date().getTime();
 
         this.beforeRenderCallback = () => {
-            if (this.movingMode === MovingMode.Flying) {
+            if (this.movingMode) {
                 let now = new Date().getTime();
                 let elapsed = now - this.lastRenderCallback;
                 this.lastRenderCallback = now;
@@ -724,7 +720,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 }
                 this.vrHelper.currentVRCamera.position.x += deltaX;
                 this.vrHelper.currentVRCamera.position.z += deltaZ;
-
             }
             //this.checkCollisions();
         }
@@ -751,27 +746,32 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     protected onTouchpadButton(nav: TouchpadNav): void {
         switch (nav) {
             case TouchpadNav.Top:
-                if (this.speed < 30) {
-                    this.speed += 1.0;
+                if (this.speed < 50) {
+                    this.speed += 2.5;
                     console.log(`**** speed=${this.speed}`);
                 }
                 break;
 
             case TouchpadNav.Bottom:
-                if (this.speed > 1) {
-                    this.speed -= 1.0;
+                if (this.speed > 0) {
+                    this.speed -= 2.5;
                     console.log(`**** speed=${this.speed}`);
                 }
                 break;
 
-                /*
             case TouchpadNav.Right:
-                this.vrHelper.currentVRCamera.position.y += 2;
+                this.vrHelper.currentVRCamera.position.y += 5;
+                console.log(`**** y=${this.vrHelper.currentVRCamera.position.y}`);
                 break;
+
             case TouchpadNav.Left:
-                this.vrHelper.currentVRCamera.position.y -= 2;
+                this.vrHelper.currentVRCamera.position.y -= 5;
+                console.log(`**** y=${this.vrHelper.currentVRCamera.position.y}`);
                 break;
-                */
+
+            case TouchpadNav.Center:
+                this.movingMode = !this.movingMode;
+                break;
         }
     }
 
