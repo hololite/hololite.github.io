@@ -253,7 +253,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
     private updateSkyboxSettings(): void {
         this.skyboxMode++;
-        if (this.skyboxMode > 5) {
+        if (this.skyboxMode > 4) {
             this.skyboxMode = 1;
         }
 
@@ -261,37 +261,52 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
         switch (this.skyboxMode) {
             case 1:
-                // sunrise 
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.5, 0.5), new BABYLON.Vector3(0.0, 0.2, 1.0), 0.4);
-                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0.45);  
-                timeout = 30000;
+                //noon
+                /*
+                this.light.intensity = 2.0;
+                this.light.direction = new BABYLON.Vector3(0.1, 0.9, 0.1);
+                this.light.diffuse = new BABYLON.Color3(1, 1, 1);
+                this.light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+                this.hemiLight.intensity = 1.0;
+                this.hemiLight.direction = new BABYLON.Vector3(0.1, 0.9, 0.1);
+                */
+                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 2.0);
+                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
+                //this.setSkyboxSettings("material.luminance", this.skyboxMaterial.luminance, 1.0); 
+                console.log(`luminance=${this.skyboxMaterial.luminance}`);
+                timeout = 100000;
                 break;
 
             case 2:
-                // morning
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, 1.0), 1.0);
-                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0.3);  
+            case 4:
+                // afternoon and morning
+                /*
+                this.light.intensity = 0.8;
+                this.light.direction = new BABYLON.Vector3(0, 0.5, -1);
+                this.light.diffuse = new BABYLON.Color3(0.5, 0.3, 0.3);
+                this.light.specular = new BABYLON.Color3(1.0, 0.5, 0.5);
+
+                this.hemiLight.intensity = 0.4;
+                this.hemiLight.direction = new BABYLON.Vector3(0, 0.5, -1);
+                */
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, -1.0), 0.9);
+                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);  // night
                 timeout = 30000;
                 break;
 
             case 3:
-                //noon
-                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.0, -1.0, 0.0), 2.0);
-                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
-                timeout = 100000;
-                break;
+                // night
+                /*
+                this.light.intensity = 0.3;
+                this.light.direction = new BABYLON.Vector3(0, 0.1, -1);
+                this.light.diffuse = new BABYLON.Color3(0.4, 0.1, 0.1);
+                this.light.specular = new BABYLON.Color3(0.6, 0.1, 0.1); // reddish highlight
 
-            case 4:
-                // afternoon
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, -1.0), 1.0);
-                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);  
-                timeout = 30000;
-                break;
-
-            case 5:
-                // sunset
+                this.hemiLight.intensity = 0.15;
+                this.hemiLight.direction = new BABYLON.Vector3(0, 0.1, -1);
+                */
                 this.setLightsParams(new BABYLON.Color3(1.0, 0.2, 0.2), new BABYLON.Vector3(0.0, 0.2, -1.0), 0.4);
-                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5); 
+                this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5);  // night
                 timeout = 30000;
                 break;
 
