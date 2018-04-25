@@ -40,6 +40,7 @@ export class VkApp {
     private debugPanel = false;
     private vrDisplay: VRDisplay = null;
     private stickValues: BABYLON.StickValues = new BABYLON.StickValues(0, 0);
+    private controllerObserver: BABYLON.Observer<BABYLON.WebVRController> = null;
 
     private menuButtonObserver(controller: BABYLON.WebVRController, eventState: BABYLON.EventState): void {
         //console.log('>>>> VkApp.menuButtonObserver: mask=%d', eventState.mask);
@@ -93,7 +94,7 @@ export class VkApp {
         if (gamepadButton.pressed) {
             if (this._onTouchpadButton) {
                 let nav = this.calculateTouchpadNav();
-                console.log(`nav=${nav}`);
+                //console.log(`nav=${nav}`);
                 this._onTouchpadButton(nav);
             }
         }
@@ -202,11 +203,16 @@ export class VkApp {
                 */
             });
 
-            this._vrHelper.onControllerMeshLoadedObservable.add((c: BABYLON.WebVRController, eventState: BABYLON.EventState) => {
+            let controllerObserver = this._vrHelper.onControllerMeshLoadedObservable.add((c: BABYLON.WebVRController, eventState: BABYLON.EventState) => {
+                console.log(`>>>> onControllerMeshLoadedObservable: controllerType=${c.controllerType}, eventState=${eventState.mask}`);
                 this.scene.freeActiveMeshes();
                 this.scene.createOrUpdateSelectionOctree();
 
-                console.log(`>>>> onControllerMeshLoadedObservable: controllerType=${c.controllerType}`);
+                if (this.controllerObserver) {
+                    let removed = this._vrHelper.onControllerMeshLoadedObservable.remove(this.controllerObserver);
+                    console.log(`controller observer removal status: ${removed}`);
+                }
+                this.controllerObserver = controllerObserver;
 
                 this.hideLaserPointer();
 
@@ -262,7 +268,6 @@ export class VkApp {
                         this.padButtonObserver(gamepadButton, eventState);
                     });
                 }
-
 
                 console.log('<<<< onControllerMeshLoadedObservable');
             });

@@ -248,7 +248,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.hemiLight.direction = dir.scale(-1.0);
         this.hemiLight.diffuse = color;
         this.hemiLight.specular = color.scale(0.5);
-        this.hemiLight.groundColor = color.scale(0.3);
+        this.hemiLight.groundColor = color.scale(0.5);
     }
 
     private updateSkyboxSettings(): void {
@@ -262,14 +262,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         switch (this.skyboxMode) {
             case 1:
                 // sunrise
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.5, 0.5), new BABYLON.Vector3(0.0, -0.2, 1.0), 0.4);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.5, 0.5), new BABYLON.Vector3(0.0, 0.2, 1.0), 0.4);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0.45); 
                 timeout = 30000;
                 break;
 
             case 2:
                 // morning
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, -1.0, 1.0), 0.9);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, 1.0), 0.9);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0.3); 
                 timeout = 55000;
                 break;
@@ -284,7 +284,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             case 4:
                 // afternoon
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, -1.0), 0.9);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.6, 0.6), new BABYLON.Vector3(0.0, 1.0, -1.0), 0.9);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);
                 timeout = 55000;
                 break;
@@ -740,7 +740,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             case TouchpadNav.Top:
                 if (this.speed < 50) {
                     this.speed += 2.5;
-                    console.log(`**** speed=${this.speed}`);
+                    //console.log(`**** speed=${this.speed}`);
                 }
                 break;
 
@@ -748,18 +748,18 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 if (this.speed > 0) {
                     let inc = (this.speed <= 5) ? 1.25 : 2.5;
                     this.speed -= inc;
-                    console.log(`**** speed=${this.speed}`);
+                    //console.log(`**** speed=${this.speed}`);
                 }
                 break;
 
             case TouchpadNav.Right:
                 this.vrHelper.currentVRCamera.position.y += 5;
-                console.log(`**** y=${this.vrHelper.currentVRCamera.position.y}`);
+                //console.log(`**** y=${this.vrHelper.currentVRCamera.position.y}`);
                 break;
 
             case TouchpadNav.Left:
                 this.vrHelper.currentVRCamera.position.y -= 5;
-                console.log(`**** y=${this.vrHelper.currentVRCamera.position.y}`);
+                //console.log(`**** y=${this.vrHelper.currentVRCamera.position.y}`);
                 break;
 
             case TouchpadNav.Center:
