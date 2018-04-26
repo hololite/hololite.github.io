@@ -453,6 +453,10 @@ export class VkApp {
     public set onTouchpadButton(value: (nav: TouchpadNav) => void) {
         this._onTouchpadButton = value;
     }
+
+    public attachControl(camera: BABYLON.Camera): void {
+        this.camera.attachControl(this.canvas);
+    }
 }
 
 export class VkSceneOptions {

@@ -8,7 +8,7 @@ import 'babylonjs-procedural-textures'
 import 'cannon';
 import 'oimo';
 import { Common } from './../VkCore/Common'
-import { VkScene, TouchpadNav, FirstScene } from './../VkCore/Vk'
+import { VkApp, VkScene, TouchpadNav, FirstScene } from './../VkCore/Vk'
 import { VkMenu } from './../VkCore/VkMenu'
 import * as Collections from 'typescript-collections'
 
@@ -78,6 +78,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private lastRenderCallback: number = 0;
     private shadowGenerator: BABYLON.ShadowGenerator = null;
     private movingMode = true;
+    private vjc: BABYLON.VirtualJoysticksCamera = null;
 
     /*
     * Public members
@@ -242,12 +243,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.light.intensity = intensity;
         this.light.direction = dir;
         this.light.diffuse = color;
-        this.light.specular = color.scale(0.5);
+        this.light.specular = color.scale(0.7);
 
         this.hemiLight.intensity = intensity/2.0;
         this.hemiLight.direction = dir.scale(-1.0);
         this.hemiLight.diffuse = color;
-        this.hemiLight.specular = color.scale(0.5);
+        this.hemiLight.specular = color.scale(0.6);
         this.hemiLight.groundColor = color.scale(0.5);
     }
 
@@ -276,9 +277,9 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             case 3:
                 // noon
-                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 2.0);
+                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 1.2);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
-                console.log(`luminance=${this.skyboxMaterial.luminance}`);
+                //console.log(`luminance=${this.skyboxMaterial.luminance}`);
                 timeout = 120000;
                 break;
 
@@ -593,6 +594,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.s3 = new BABYLON.SimplificationSettings(0.5, 100, true);
             }
 
+            this.vjc = new BABYLON.VirtualJoysticksCamera("VJC", this.scene.activeCamera.position, this.scene);
+            this.scene.activeCamera.dispose();
+            this.scene.activeCamera = this.vjc;
+            this.vjc.checkCollisions = true;
+            VkApp.instance.attachControl(this.vjc);
+
             container.addAllToScene();
 
             let defaultLight = this.scene.getLightByName('Default light');
@@ -696,22 +703,36 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.lastRenderCallback = now;
 
                 let inc = this.speed * elapsed / 1000.0;
-                let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
-                let dir = rot.toEulerAngles();
+                let dir: BABYLON.Vector3;
+                let camera: BABYLON.Camera = null;
 
-                let deltaY = inc * Math.sin(-dir.x);
-                let deltaZ = inc * Math.cos(dir.y);
-                let deltaX = inc * Math.sin(dir.y);
-                // make moving up faster than moving down
-                if (deltaY > 0) {
-                    deltaY *= 5;
+                // set camera and dir
+                if (this.vrHelper.isInVRMode) {
+                    camera = this.vrHelper.currentVRCamera;
+                    let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
+                    dir = rot.toEulerAngles();
+                }
+                else if (this.vjc) {
+                    camera = this.vjc;
+                    dir = this.vjc.rotation;
                 }
 
-                if (this.vrHelper.currentVRCamera.position.y < 1000 || deltaY < 0) {
-                    this.vrHelper.currentVRCamera.position.y += deltaY;
+                // update camera's position based on the current dir
+                if (camera) {
+                    let deltaY = inc * Math.sin(-dir.x);
+                    let deltaZ = inc * Math.cos(dir.y);
+                    let deltaX = inc * Math.sin(dir.y);
+                    // make moving up faster than moving down
+                    if (deltaY > 0) {
+                        deltaY *= 5;
+                    }
+
+                    if (camera.position.y < 1000 || deltaY < 0) {
+                        camera.position.y += deltaY;
+                    }
+                    camera.position.x += deltaX;
+                    camera.position.z += deltaZ;
                 }
-                this.vrHelper.currentVRCamera.position.x += deltaX;
-                this.vrHelper.currentVRCamera.position.z += deltaZ;
             }
             //this.checkCollisions();
         }
