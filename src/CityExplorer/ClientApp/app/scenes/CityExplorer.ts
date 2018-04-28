@@ -78,7 +78,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private lastRenderCallback: number = 0;
     private shadowGenerator: BABYLON.ShadowGenerator = null;
     private movingMode = true;
-    private vjc: BABYLON.VirtualJoysticksCamera = null;
+    private loadingStep = 0;
 
     /*
     * Public members
@@ -150,6 +150,19 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         let decal = BABYLON.MeshBuilder.CreateDecal("decal", pickedMesh, { position: pickInfo.pickedPoint, normal: pickInfo.getNormal(true), size: decalSize });
         decal.material = this.decalMaterial;
         this.decals.push(decal);
+    }
+
+    protected onVREntered(): void {
+        console.log('>>>> VkScene.onVREntered');
+
+        console.log('<<<< VkScene.onVREntered');
+    }
+
+    protected onControllerLoaded(controller: BABYLON.WebVRController): void {
+        if (this.opt.freezeMeshes) {
+            this.scene.freeActiveMeshes();
+        }
+        this.scene.createOrUpdateSelectionOctree();
     }
 
     protected onTriggerButton(controller: BABYLON.WebVRController, pressed: boolean): void {
@@ -594,12 +607,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.s3 = new BABYLON.SimplificationSettings(0.5, 100, true);
             }
 
-            this.vjc = new BABYLON.VirtualJoysticksCamera("VJC", this.scene.activeCamera.position, this.scene);
-            this.scene.activeCamera.dispose();
-            this.scene.activeCamera = this.vjc;
-            this.vjc.checkCollisions = true;
-            VkApp.instance.attachControl(this.vjc);
-
             container.addAllToScene();
 
             let defaultLight = this.scene.getLightByName('Default light');
@@ -636,9 +643,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 else {
                     // add to teleport mesh
                     //BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
-                    this.vrHelper.addFloorMesh(m);
-                    if (this.settings.enableShadows) {
-                        m.receiveShadows = true;
+                    if (this.isVREnabled()) {
+                        this.vrHelper.addFloorMesh(m);
+                        if (this.settings.enableShadows) {
+                            m.receiveShadows = true;
+                        }
                     }
                 }
 
@@ -653,11 +662,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             if (this.opt.freezeMeshes) {
                 this.scene.freezeActiveMeshes();
             }
-            /*
-            else {
-                this.scene.unfreezeActiveMeshes();
-            }
-            */
 
             if (this.opt.optimizeMeshes) {
                 // remove the root mesh
@@ -704,35 +708,30 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
                 let inc = this.speed * elapsed / 1000.0;
                 let dir: BABYLON.Vector3;
-                let camera: BABYLON.Camera = null;
 
                 // set camera and dir
-                if (this.vrHelper.isInVRMode) {
-                    camera = this.vrHelper.currentVRCamera;
+                if (this.isVREnabled()) {
                     let rot = this.vrHelper.webVRCamera.deviceRotationQuaternion.clone();
                     dir = rot.toEulerAngles();
                 }
-                else if (this.vjc) {
-                    camera = this.vjc;
-                    dir = this.vjc.rotation;
+                else {
+                    dir = this.camera.rotation;
                 }
 
                 // update camera's position based on the current dir
-                if (camera) {
-                    let deltaY = inc * Math.sin(-dir.x);
-                    let deltaZ = inc * Math.cos(dir.y);
-                    let deltaX = inc * Math.sin(dir.y);
-                    // make moving up faster than moving down
-                    if (deltaY > 0) {
-                        deltaY *= 5;
-                    }
-
-                    if (camera.position.y < 1000 || deltaY < 0) {
-                        camera.position.y += deltaY;
-                    }
-                    camera.position.x += deltaX;
-                    camera.position.z += deltaZ;
+                let deltaY = inc * Math.sin(-dir.x);
+                let deltaZ = inc * Math.cos(dir.y);
+                let deltaX = inc * Math.sin(dir.y);
+                // make moving up faster than moving down
+                if (deltaY > 0) {
+                    deltaY *= 5;
                 }
+
+                if (this.camera.position.y < 1000 || deltaY < 0) {
+                    this.camera.position.y += deltaY;
+                }
+                this.camera.position.x += deltaX;
+                this.camera.position.z += deltaZ;
             }
             //this.checkCollisions();
         }
@@ -774,12 +773,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 break;
 
             case TouchpadNav.Right:
-                this.vrHelper.currentVRCamera.position.y += 5;
+                this.camera.position.y += 5;
                 //console.log(`**** y=${this.vrHelper.currentVRCamera.position.y}`);
                 break;
 
             case TouchpadNav.Left:
-                this.vrHelper.currentVRCamera.position.y -= 5;
+                this.camera.position.y -= 5;
                 //console.log(`**** y=${this.vrHelper.currentVRCamera.position.y}`);
                 break;
 

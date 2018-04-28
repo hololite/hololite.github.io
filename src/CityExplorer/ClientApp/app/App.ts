@@ -2,10 +2,24 @@ import { Common } from './VkCore/Common'
 import { VkApp, VkAppOptions } from './VkCore/Vk'
 import { Director } from './Director'
 
+function getUrlParam(name) {
+    let url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+    if (!results) return '';
+    else if (!results[2]) return '';
+    else return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 export class App extends VkApp {
     private constructor() {
-        let options: VkAppOptions = { enableVR: true, debugLayer: false };
 
+        //let query = window.location.search.substring(1);
+        let touchParam = getUrlParam("touch");
+        let touch: boolean = (touchParam === "true") ? true : false;
+        console.log(`**** touch=[${touch}]`);
+
+        let options: VkAppOptions = { enableVR: !touch, debugLayer: false };
         super(Common.canvasName, new Director(), options);
 	}
 

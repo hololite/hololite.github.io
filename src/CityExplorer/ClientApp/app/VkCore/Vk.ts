@@ -31,8 +31,10 @@ export class VkApp {
     private readonly _vrHelper: BABYLON.VRExperienceHelper = null;
     private readonly _options: VkAppOptions = null;
     private readonly _systemAssets: BABYLON.KeepAssets = null;
-    private _freeCamera: BABYLON.FreeCamera = null;
+    private _vjc: BABYLON.VirtualJoysticksCamera = null;
     private _onMenuButton: (controller: BABYLON.WebVRController, pressed: boolean) => void = null; 
+    private _onControllerLoaded: (controller: BABYLON.WebVRController) => void = null; 
+    private _onVREntered: () => void = null; 
     private _menuButtonPressed = false;
     private _triggerButtonPressed = false;
     private _onTriggerButton: (controller: BABYLON.WebVRController, pressed: boolean) => void = null; 
@@ -190,6 +192,10 @@ export class VkApp {
                     }
                 });
 
+                if (this._onVREntered) {
+                    this._onVREntered();
+                }
+
                 /*
                 let defaultPipeline = new BABYLON.DefaultRenderingPipeline("default", true, this.scene, [vrHelper.vrDeviceOrientationCamera, vrHelper.webVRCamera, vrHelper.vrDeviceOrientationCamera]);
                 defaultPipeline.fxaaEnabled = true;
@@ -205,8 +211,10 @@ export class VkApp {
 
             let controllerObserver = this._vrHelper.onControllerMeshLoadedObservable.add((c: BABYLON.WebVRController, eventState: BABYLON.EventState) => {
                 console.log(`>>>> onControllerMeshLoadedObservable: controllerType=${c.controllerType}, eventState=${eventState.mask}`);
-                this.scene.freeActiveMeshes();
-                this.scene.createOrUpdateSelectionOctree();
+
+                if (this._onControllerLoaded) {
+                    this._onControllerLoaded(c);
+                }
 
                 if (this.controllerObserver) {
                     let removed = this._vrHelper.onControllerMeshLoadedObservable.remove(this.controllerObserver);
@@ -302,11 +310,10 @@ export class VkApp {
             }
         }
         else {
-            this._vrHelper = null;
-            this._freeCamera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 2, -20), this.scene);
-            //this.traceSceneAssets('after creating free camera');
-            this._freeCamera.setTarget(new BABYLON.Vector3(0, 0, 0));
-            this._freeCamera.attachControl(this.canvas);
+            this._vjc = new BABYLON.VirtualJoysticksCamera("VJC", new BABYLON.Vector3(0, 0, 0), this.scene);
+            this._vjc.attachControl(this._canvas);
+            this.scene.activeCamera = this._vjc;
+            //this._vjc.checkCollisions = true;
         }
 
         // first-step to save the initial system assets related to vr
@@ -353,12 +360,8 @@ export class VkApp {
     public get vrDevice(): VRDisplay { return this.vrDevice; }
     public get director(): IVkDirector { return this._director; }
     public get systemAssets(): BABYLON.KeepAssets { return this._systemAssets; }
-    public get camera(): BABYLON.Camera {
-        return this.isVREnabled() ? this._vrHelper.currentVRCamera : this._freeCamera;
-    }
-
-    public getDefaultCamera(): BABYLON.FreeCamera {
-        return this.isVREnabled() ? this._vrHelper.deviceOrientationCamera : this._freeCamera;
+    public get camera(): BABYLON.FreeCamera {
+        return this.isVREnabled() ? this._vrHelper.webVRCamera : this._vjc;
     }
 
     public traceSceneAssets(tag: string): void {
@@ -442,6 +445,10 @@ export class VkApp {
         this._engine.stopRenderLoop();
     }
 
+    public set onControllerLoaded(value: (controller: BABYLON.WebVRController) => void) {
+        this._onControllerLoaded = value;
+    }
+
     public set onMenuButton(value: (controller: BABYLON.WebVRController, pressed: boolean) => void) {
         this._onMenuButton = value;
     }
@@ -452,6 +459,10 @@ export class VkApp {
 
     public set onTouchpadButton(value: (nav: TouchpadNav) => void) {
         this._onTouchpadButton = value;
+    }
+
+    public set onVREntered(value: () => void) {
+        this._onVREntered = value;
     }
 
     public attachControl(camera: BABYLON.Camera): void {
@@ -484,7 +495,7 @@ export abstract class VkScene {
     protected get vrHelper(): BABYLON.VRExperienceHelper { return VkApp.instance.vrHelper; }
     protected get preRender(): ()=>void { return this._preRender; }
     protected set preRender(value: ()=>void) { this._preRender = value; }
-    protected get camera(): BABYLON.Camera { return VkApp.instance.camera; }
+    protected get camera(): BABYLON.FreeCamera { return VkApp.instance.camera; }
 
     protected set beforeRenderCallback(value: () => void) {
         this._beforeRenderCallback = value;
@@ -501,18 +512,16 @@ export abstract class VkScene {
 
     protected isVREnabled(): boolean { return VkApp.instance.isVREnabled(); }
 
-    protected getVRCamera(): BABYLON.WebVRFreeCamera {
-        return this.isVREnabled() ?  this.vrHelper.webVRCamera : null;
-    }
-
-    protected getDefaultCamera(): BABYLON.FreeCamera {
-        return VkApp.instance.getDefaultCamera();
-    }
-
     protected onMenuButton(controller: BABYLON.WebVRController, pressed: boolean): void {
     }
 
     protected onTriggerButton(controller: BABYLON.WebVRController, pressed: boolean): void {
+    }
+
+    protected onVREntered(): void {
+    }
+
+    protected onControllerLoaded(controller: BABYLON.WebVRController): void {
     }
 
     //
@@ -647,19 +656,11 @@ export abstract class VkScene {
 
             if (this._options.cameraInitialPosition !== undefined) {
                 this.vrHelper.deviceOrientationCamera.position = this._options.cameraInitialPosition;
-                this.vrHelper.webVRCamera.position = this._options.cameraInitialPosition;
+                this.camera.position = this._options.cameraInitialPosition;
             }
 
             if (this._options.cameraInitialTarget !== undefined) {
-                this.vrHelper.deviceOrientationCamera.setTarget(this._options.cameraInitialTarget);
-            }
-
-            if (this._options.attachCamera === false) {
-                this.vrHelper.deviceOrientationCamera.detachControl(this.canvas);
-            }
-            else {
-                // the default is to attach
-                this.vrHelper.deviceOrientationCamera.attachControl(this.canvas, false);
+                this.camera.setTarget(this._options.cameraInitialTarget);
             }
 
         }
@@ -757,6 +758,8 @@ export abstract class VkScene {
         VkApp.instance.onMenuButton = (controller: BABYLON.WebVRController, pressed: boolean) => { this.onMenuButton(controller, pressed); };
         VkApp.instance.onTriggerButton = (controller: BABYLON.WebVRController, pressed: boolean) => { this.onTriggerButton(controller, pressed); };
         VkApp.instance.onTouchpadButton = (nav: TouchpadNav) => { this.onTouchpadButton(nav); };
+        VkApp.instance.onVREntered = () => { this.onVREntered(); };
+        VkApp.instance.onControllerLoaded = (controller: BABYLON.WebVRController) => { this.onControllerLoaded(controller); };
 
         this._beforeRenderCallback = null;
         this._beforeRenderObserver = null;
