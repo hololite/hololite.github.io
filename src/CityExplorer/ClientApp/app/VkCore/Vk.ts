@@ -310,7 +310,7 @@ export class VkApp {
             }
         }
         else {
-            this._vjc = new BABYLON.VirtualJoysticksCamera("VJC", new BABYLON.Vector3(0, 0, 0), this.scene);
+            this._vjc = new BABYLON.VirtualJoysticksCamera("VJC", new BABYLON.Vector3(200, 100, 0), this.scene);
             this._vjc.attachControl(this._canvas);
             this.scene.activeCamera = this._vjc;
             //this._vjc.checkCollisions = true;

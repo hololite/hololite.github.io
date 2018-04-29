@@ -43,8 +43,8 @@ export class Director implements IVkDirector {
         this.cityExplorerScene = new CityExplorerScene(
             "assets/scenes/babylonjs/city/",
             "HugeCity.babylon",
-            new BABYLON.Vector3(120, 30, 0),
-            new BABYLON.Vector3(120, 31, 10),
+            new BABYLON.Vector3(200, 100, 0),
+            new BABYLON.Vector3(200, 101, 10),
             {
                 defaultEnv: false,
                 soundFile: "assets/mskyline.mp3"

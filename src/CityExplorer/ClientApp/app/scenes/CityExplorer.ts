@@ -53,7 +53,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     };
 
     private settings = {
-        enableShadows: false 
+        enableShadows: true, 
     };
 
     private hemiLight: BABYLON.HemisphericLight = null;
@@ -199,12 +199,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.light = new BABYLON.DirectionalLight("DirLight", new BABYLON.Vector3(-1, 1, -1), this.scene);
 
         if (this.settings.enableShadows) {
-            this.shadowGenerator = new BABYLON.ShadowGenerator(2*1024, this.light);
-            this.shadowGenerator.useBlurExponentialShadowMap = true;
-            this.shadowGenerator.setDarkness(0.3);
+            this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
+            this.shadowGenerator.setDarkness(0);
+            //this.shadowGenerator.useBlurExponentialShadowMap = true;
+            this.shadowGenerator.useContactHardeningShadow = true;
             //this.shadowGenerator.bias = 0.00001;
             //this.shadowGenerator.normalBias = 0.01;
-            //this.shadowGenerator.useContactHardeningShadow = true;
             //this.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
             //this.shadowGenerator.useKernelBlur = true;
             //this.shadowGenerator.blurKernel = 64;
@@ -261,7 +261,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.light.diffuse = color;
         this.light.specular = color.scale(0.7);
 
-        this.hemiLight.intensity = intensity/2.0;
+        this.hemiLight.intensity = intensity/2.5;
         this.hemiLight.direction = dir.scale(-1.0);
         this.hemiLight.diffuse = color;
         this.hemiLight.specular = color.scale(0.6);
@@ -279,21 +279,21 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         switch (this.skyboxMode) {
             case 1:
                 // sunrise
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.5, 0.5), new BABYLON.Vector3(0.0, 0.2, 1.0), 0.4);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.5, 0.5), new BABYLON.Vector3(0.0, 0.2, 1.0), 0.5);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0.45); 
                 timeout = 30000;
                 break;
 
             case 2:
                 // morning
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, 1.0), 0.9);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, 1.0), 1.2);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0.3); 
                 timeout = 55000;
                 break;
 
             case 3:
                 // noon
-                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 1.2);
+                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 2.0);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
                 //console.log(`luminance=${this.skyboxMaterial.luminance}`);
                 timeout = 120000;
@@ -301,14 +301,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             case 4:
                 // afternoon
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.6, 0.6), new BABYLON.Vector3(0.0, 1.0, -1.0), 0.9);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.6, 0.6), new BABYLON.Vector3(0.0, 1.0, -1.0), 1.2);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);
                 timeout = 55000;
                 break;
 
             case 5:
                 // sunset
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.2, 0.2), new BABYLON.Vector3(0.0, 0.2, -1.0), 0.4);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.2, 0.2), new BABYLON.Vector3(0.0, 0.2, -1.0), 0.5);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5); 
                 timeout = 30000;
                 break;
@@ -648,11 +648,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     //BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
                     if (this.isVREnabled()) {
                         this.vrHelper.addFloorMesh(m);
-                        if (this.settings.enableShadows) {
-                            m.receiveShadows = true;
-                        }
                     }
                 }
+
+                m.receiveShadows = this.settings.enableShadows;
 
                 /* 
                 if (this.loaderOptions.scale !== 1) {
