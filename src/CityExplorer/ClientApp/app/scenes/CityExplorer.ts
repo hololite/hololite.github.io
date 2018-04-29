@@ -162,7 +162,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         if (this.opt.freezeMeshes) {
             this.scene.freeActiveMeshes();
         }
-        this.scene.createOrUpdateSelectionOctree();
+
+        if (this.opt.optimizeMeshes) {
+            //this.scene.createOrUpdateSelectionOctree();
+        }
     }
 
     protected onTriggerButton(controller: BABYLON.WebVRController, pressed: boolean): void {
@@ -626,7 +629,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 //console.log(`mesh: name=${m.name}, submeshes=${submeshesCount}, children=${childCount}`);
 
                 if (this.opt.optimizeMeshes) {
-                    m.parent = null;
+                    //m.parent = null;
                     m.alwaysSelectAsActiveMesh = true;
                     m.freezeWorldMatrix();
                 }
@@ -665,11 +668,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             if (this.opt.optimizeMeshes) {
                 // remove the root mesh
-                let root = this.scene.getMeshByName("RootNode");
-                root.isVisible = false;
-                console.log(`root mesh removed: index=${this.scene.removeMesh(root)}`);
+                //let root = this.scene.getMeshByName("RootNode");
+                //root.isVisible = false;
+                //console.log(`root mesh removed: index=${this.scene.removeMesh(root)}`);
                 // use oct tree
-                this.scene.createOrUpdateSelectionOctree();
+                //this.scene.createOrUpdateSelectionOctree();
                 this.scene.freezeMaterials();
             }
 

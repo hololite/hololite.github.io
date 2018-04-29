@@ -15,11 +15,11 @@ export class App extends VkApp {
     private constructor() {
 
         //let query = window.location.search.substring(1);
-        let touchParam = getUrlParam("touch");
-        let touch: boolean = (touchParam === "true") ? true : false;
-        console.log(`**** touch=[${touch}]`);
+        let touch: boolean = (getUrlParam("touch") === "true");
+        let debug: boolean = (getUrlParam("debug") === "true");
+        console.log(`**** touch=[${touch}], debug=[${debug}]`);
 
-        let options: VkAppOptions = { enableVR: !touch, debugLayer: false };
+        let options: VkAppOptions = { enableVR: !touch, debugLayer: debug };
         super(Common.canvasName, new Director(), options);
 	}
 
