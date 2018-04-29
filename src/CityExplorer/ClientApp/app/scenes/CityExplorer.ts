@@ -53,7 +53,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     };
 
     private settings = {
-        enableShadows: true, 
+        enableShadows: this.isVREnabled(), 
     };
 
     private hemiLight: BABYLON.HemisphericLight = null;
@@ -201,12 +201,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         if (this.settings.enableShadows) {
             this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
             this.shadowGenerator.setDarkness(0);
-            if (this.isVREnabled) {
-                this.shadowGenerator.useContactHardeningShadow = true;
-            }
-            else {
-                this.shadowGenerator.useBlurExponentialShadowMap = true;
-            }
+            this.shadowGenerator.useContactHardeningShadow = true;
+            //this.shadowGenerator.useBlurExponentialShadowMap = true;
             //this.shadowGenerator.bias = 0.00001;
             //this.shadowGenerator.normalBias = 0.01;
             //this.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
