@@ -8,7 +8,7 @@ import 'babylonjs-procedural-textures'
 import 'cannon';
 import 'oimo';
 import { Common } from './../VkCore/Common'
-import { VkApp, VkScene, TouchpadNav, FirstScene } from './../VkCore/Vk'
+import { VkApp, VkScene, TouchpadNav, FirstScene, ShadowType } from './../VkCore/Vk'
 import { VkMenu } from './../VkCore/VkMenu'
 import * as Collections from 'typescript-collections'
 
@@ -53,7 +53,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     };
 
     private settings = {
-        enableShadows: this.isVREnabled(), 
+        //enableShadows: (VkApp.instance.options.shadow !== ''), 
     };
 
     private hemiLight: BABYLON.HemisphericLight = null;
@@ -197,17 +197,32 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
         this.hemiLight = new BABYLON.HemisphericLight("DirLight", new BABYLON.Vector3(0, 1, 0), this.scene);
         this.light = new BABYLON.DirectionalLight("DirLight", new BABYLON.Vector3(-1, 1, -1), this.scene);
+        this.light.shadowMinZ = 30;
+        this.light.shadowMaxZ = 1000;
 
-        if (this.settings.enableShadows) {
+        if (VkApp.instance.options.shadow !== ShadowType.None) {
             this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
             this.shadowGenerator.setDarkness(0);
+        }
+
+        if (VkApp.instance.options.shadow === ShadowType.Contact) {
             this.shadowGenerator.useContactHardeningShadow = true;
+            this.shadowGenerator.bias = 0.0;
+            this.shadowGenerator.normalBias = 0.05;
+		    this.shadowGenerator.contactHardeningLightSizeUVRatio = 0.08;
+
             //this.shadowGenerator.useBlurExponentialShadowMap = true;
-            //this.shadowGenerator.bias = 0.00001;
             //this.shadowGenerator.normalBias = 0.01;
             //this.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
             //this.shadowGenerator.useKernelBlur = true;
             //this.shadowGenerator.blurKernel = 64;
+        }
+        else if (VkApp.instance.options.shadow === ShadowType.Exponential) {
+            this.shadowGenerator.useBlurExponentialShadowMap = true;
+        }
+        else if (VkApp.instance.options.shadow === ShadowType.Close) {
+            this.shadowGenerator.useCloseExponentialShadowMap = true;
+            this.shadowGenerator.useKernelBlur = true;
         }
 
         this.decalMaterial = new BABYLON.StandardMaterial("decalMat", this.scene);
@@ -638,12 +653,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     m.simplify([this.s1, this.s2, this.s3], false, BABYLON.SimplificationType.QUADRATIC);
                 }
 
-                if (m.name.startsWith("Facade") || m.name.startsWith("RoofPla")) {
-                    if (this.settings.enableShadows) {
-                        this.shadowGenerator.addShadowCaster(m);
-                    }
-                }
-                else {
+                if (!(m.name.startsWith("Facade") || m.name.startsWith("RoofPla"))) {
                     // add to teleport mesh
                     //BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
                     if (this.isVREnabled()) {
@@ -651,14 +661,21 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     }
                 }
 
-                m.receiveShadows = this.settings.enableShadows;
+                if (VkApp.instance.options.shadow !== ShadowType.None) {
+                    m.receiveShadows = true;
+                    if (m.name.startsWith("Facade") || m.name.startsWith("RoofPla")) {
+                        this.shadowGenerator.addShadowCaster(m);
+                    }
+                }
+                else {
+                    m.receiveShadows = false;
+                }
 
                 /* 
                 if (this.loaderOptions.scale !== 1) {
                     this.meshes[0].scaling.scaleInPlace(this.loaderOptions.scale);
                 }
                 */
-
             }
 
             if (this.opt.freezeMeshes) {

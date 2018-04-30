@@ -11,12 +11,16 @@ export enum ControllerMode {
 }
 
 export class VkException {
-
 }
 
+export enum ShadowType {
+    Contact, Exponential, Close, None
+};
+
 export class VkAppOptions {
-    readonly enableVR?:                  boolean = true;
-    readonly debugLayer?:                boolean = false;
+    readonly enableVR?:                 boolean = true;
+    readonly debugLayer?:               boolean = false;
+    readonly shadow?:                   ShadowType = ShadowType.None;
 }
 
 export enum TouchpadNav { None, Center, Top, Bottom, Left, Right };
