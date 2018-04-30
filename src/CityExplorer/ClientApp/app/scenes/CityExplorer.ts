@@ -224,6 +224,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             this.shadowGenerator.useCloseExponentialShadowMap = true;
             this.shadowGenerator.useKernelBlur = true;
         }
+        else if (VkApp.instance.options.shadow === ShadowType.PCF) {
+            this.shadowGenerator.usePercentageCloserFiltering = true;
+            this.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
+        }
 
         this.decalMaterial = new BABYLON.StandardMaterial("decalMat", this.scene);
         this.decalMaterial.diffuseTexture = new BABYLON.Texture("assets/textures/impact.png", this.scene);
@@ -657,7 +661,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     // add to teleport mesh
                     //BABYLON.Tools.Log(`teleport mesh: name=${m.name}`);
                     if (this.isVREnabled()) {
-                        this.vrHelper.addFloorMesh(m);
+                        this.addTeleportMesh(m);
                     }
                 }
 

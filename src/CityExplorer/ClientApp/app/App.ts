@@ -12,7 +12,7 @@ function getUrlParam(name) {
 }
 
 function getShadowType(shadow: string): ShadowType {
-    let type: ShadowType = ShadowType.Close;
+    let type: ShadowType = ShadowType.None;
 
     if (shadow === 'contact') {
         type = ShadowType.Contact;
@@ -22,6 +22,9 @@ function getShadowType(shadow: string): ShadowType {
     }
     else if (shadow === 'close') {
         type = ShadowType.Close;
+    }
+    else if (shadow === 'pcf') {
+        type = ShadowType.PCF;
     }
     else if (shadow === 'none') {
         type = ShadowType.None;

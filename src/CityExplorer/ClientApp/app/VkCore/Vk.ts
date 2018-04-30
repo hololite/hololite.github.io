@@ -14,7 +14,7 @@ export class VkException {
 }
 
 export enum ShadowType {
-    Contact, Exponential, Close, None
+    Contact, Exponential, Close, PCF, None
 };
 
 export class VkAppOptions {
@@ -314,9 +314,8 @@ export class VkApp {
             }
         }
         else {
-            this._vjc = new BABYLON.VirtualJoysticksCamera("VJC", new BABYLON.Vector3(200, 100, 0), this.scene);
+            this._vjc = new BABYLON.VirtualJoysticksCamera("VJC", BABYLON.Vector3.Zero(), this.scene);
             this._vjc.attachControl(this._canvas);
-            this.scene.activeCamera = this._vjc;
             //this._vjc.checkCollisions = true;
         }
 
@@ -468,10 +467,6 @@ export class VkApp {
     public set onVREntered(value: () => void) {
         this._onVREntered = value;
     }
-
-    public attachControl(camera: BABYLON.Camera): void {
-        this.camera.attachControl(this.canvas);
-    }
 }
 
 export class VkSceneOptions {
@@ -617,58 +612,38 @@ export abstract class VkScene {
         console.log('<<<< traceContainerAssets: scene=%s', this.name);
     }
 
-
     private initializeOptions() {
-        console.log('>>>> initializeOptions: scene=%s', this.name);
+        console.log('>>>> VkApp.initializeOptions: scene=%s', this.name);
         // not necessary
         //BABYLON.DebugLayer.InspectorURL = '/vendor.bundle.js';
 
         if (this.isVREnabled()) {
-            //VkApp.instance.showLaserPointer();
-            /*
-            if (this._options.controllerMode === ControllerMode.Interaction) {
-                this.vrHelper.enableInteractions();
-                console.log("enableInteraction");
-            }
-            else {
-                if (this._options.floorName !== undefined) {
-                    this.vrHelper.enableTeleportation({ floorMeshName: this._options.floorName });
-                    console.log("enableTeleportation");
-                }
-            }
-            */
             this.vrHelper.displayGaze = false;
             //this.vrHelper.changeLaserColor(BABYLON.Color3.Yellow());
             this.vrHelper.displayLaserPointer = false;
             //this.vrHelper.webVROptions.defaultHeight = 2;
 
-            /*
-            this.vrHelper.onEnteringVR.add(() => {
-                console.log("**** onEnteringVR");
-                if (this._options.cameraInitialPosition !== undefined) {
-                    this.vrHelper.webVRCamera.position = this._options.cameraInitialPosition;
-                }
-
-                if (this._options.cameraInitialTarget !== undefined) {
-                    this.vrHelper.webVRCamera.setTarget(this._options.cameraInitialTarget);
-                }
-            });
-            this.vrHelper.onExitingVR.add(() => {
-                console.log("**** onExitingVR");
-            });
-            */
-
+            console.log('initializing webvr camera dir');
             if (this._options.cameraInitialPosition !== undefined) {
                 this.vrHelper.deviceOrientationCamera.position = this._options.cameraInitialPosition;
+                this.vrHelper.webVRCamera.position = this._options.cameraInitialPosition;
+            }
+            if (this._options.cameraInitialTarget !== undefined) {
+                this.vrHelper.deviceOrientationCamera.setTarget(this._options.cameraInitialTarget);
+            }
+            this.vrHelper.deviceOrientationCamera.attachControl(this.canvas, false);
+        }
+        else {
+            console.log('initializing vjc camera dir');
+            if (this._options.cameraInitialPosition !== undefined) {
                 this.camera.position = this._options.cameraInitialPosition;
             }
-
             if (this._options.cameraInitialTarget !== undefined) {
                 this.camera.setTarget(this._options.cameraInitialTarget);
             }
-
         }
-        console.log('<<<< initializeOptions: scene=%s', this.name);
+
+        console.log('<<<< VkApp.initializeOptions: scene=%s', this.name);
     }
 
     /*
