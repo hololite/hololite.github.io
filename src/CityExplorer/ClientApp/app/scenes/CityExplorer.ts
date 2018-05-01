@@ -200,17 +200,15 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.light.shadowMinZ = 30;
         this.light.shadowMaxZ = 1000;
 
-        if (VkApp.instance.options.shadow !== ShadowType.None) {
-            this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
-            this.shadowGenerator.setDarkness(0);
-        }
+        this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
+        this.shadowGenerator.setDarkness(0);
+        this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
 
         if (VkApp.instance.options.shadow === ShadowType.Contact) {
             this.shadowGenerator.useContactHardeningShadow = true;
             this.shadowGenerator.bias = 0.0;
             this.shadowGenerator.normalBias = 0.05;
 		    this.shadowGenerator.contactHardeningLightSizeUVRatio = 0.08;
-
             //this.shadowGenerator.useBlurExponentialShadowMap = true;
             //this.shadowGenerator.normalBias = 0.01;
             //this.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
@@ -275,6 +273,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 	};
 
     private setLightsParams(color: BABYLON.Color3, dir: BABYLON.Vector3, intensity: number): void {
+        this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYTWOFRAMES;
+
         this.light.intensity = intensity;
         this.light.direction = dir;
         this.light.diffuse = color;
@@ -285,6 +285,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.hemiLight.diffuse = color;
         this.hemiLight.specular = color.scale(0.6);
         this.hemiLight.groundColor = color.scale(0.5);
+
+        setTimeout(() => {
+            this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+        }, 1000);
     }
 
     private updateSkyboxSettings(): void {
@@ -667,7 +671,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
                 if (VkApp.instance.options.shadow !== ShadowType.None) {
                     m.receiveShadows = true;
-                    if (m.name.startsWith("Facade") || m.name.startsWith("RoofPla")) {
+                    if (m.name.startsWith("Facade") || m.name.startsWith("Roof") || m.name.startsWith("FlatRoo")) {
                         this.shadowGenerator.addShadowCaster(m);
                     }
                 }

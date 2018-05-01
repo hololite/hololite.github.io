@@ -12,7 +12,7 @@ function getUrlParam(name) {
 }
 
 function getShadowType(shadow: string): ShadowType {
-    let type: ShadowType = ShadowType.None;
+    let type: ShadowType = ShadowType.PCF;
 
     if (shadow === 'contact') {
         type = ShadowType.Contact;
