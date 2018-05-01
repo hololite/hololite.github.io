@@ -45,10 +45,11 @@ class CityExplorerOptions implements ICityExplorerOptions {
 
 export class CityExplorerScene extends FirstScene implements EventListenerObject {
     private readonly opt = {
+        enableSceneOptimizer: true,
         optimizeMeshes: true,
         freezeMeshes: true,
-        optClear: true,
-        optTexture: false,
+        disableAutoClear: true,
+        optimizeTexture: false,
         enableLOD: false
     };
 
@@ -79,6 +80,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private shadowGenerator: BABYLON.ShadowGenerator = null;
     private movingMode = true;
     private loadingStep = 0;
+    private sceneOptimizer: BABYLON.SceneOptimizer = null;
 
     /*
     * Public members
@@ -92,6 +94,47 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.path = path;
         this.file = file;
         this.loaderOptions = new CityExplorerOptions(options);
+    }
+
+    private initializeSceneOptimizer(): void {
+        /*
+        let options = new BABYLON.SceneOptimizerOptions(60, 1000);
+        options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1));
+        let priority = 0;
+        options.optimizations.push(new BABYLON.ShadowsOptimization(priority));
+        options.optimizations.push(new BABYLON.LensFlaresOptimization(priority));
+
+        // Next priority
+        priority++;
+        options.optimizations.push(new BABYLON.PostProcessesOptimization(priority));
+        options.optimizations.push(new BABYLON.ParticlesOptimization(priority));
+
+        // Next priority
+        priority++;
+        options.optimizations.push(new BABYLON.TextureOptimization(priority, 256));
+
+        // Next priority
+        priority++;
+        options.optimizations.push(new BABYLON.RenderTargetsOptimization(priority));
+
+        // Next priority
+        priority++;
+        options.optimizations.push(new BABYLON.HardwareScalingOptimization(priority, 4));
+        */
+
+        let options = BABYLON.SceneOptimizerOptions.ModerateDegradationAllowed(60);
+        this.sceneOptimizer = new BABYLON.SceneOptimizer(this.scene, options, true, true);
+
+        // events
+        this.sceneOptimizer.onSuccessObservable.add(() => {
+            console.log(`SceneOptimizer: status=completed, frameRate=${this.sceneOptimizer.currentFrameRate}`);
+        });
+        this.sceneOptimizer.onNewOptimizationAppliedObservable.add((optim) => {
+            console.log(`SceneOptimzer: applied ${optim.getDescription()}`);
+        });
+        this.sceneOptimizer.onFailureObservable.add(() => {
+            console.log(`SceneOptimizer: status=failed, frameRate=${this.sceneOptimizer.currentFrameRate}`);
+        });
     }
 
     /*
@@ -195,9 +238,13 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     protected createAssets(): void {
         console.log('>>>> CityExplorerScene.createAssets');
 
+        if (this.opt.enableSceneOptimizer) {
+            this.initializeSceneOptimizer();
+        }
+
         this.hemiLight = new BABYLON.HemisphericLight("DirLight", new BABYLON.Vector3(0, 1, 0), this.scene);
         this.light = new BABYLON.DirectionalLight("DirLight", new BABYLON.Vector3(-1, 1, -1), this.scene);
-        this.light.shadowMinZ = 30;
+        this.light.shadowMinZ = 1;
         this.light.shadowMaxZ = 1000;
 
         this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
@@ -700,16 +747,19 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 this.scene.freezeMaterials();
             }
 
-            if (this.opt.optClear) {
+            if (this.opt.disableAutoClear) {
                 this.scene.autoClear = false; // color buffer
                 this.scene.autoClearDepthAndStencil = false; // depth and stencil buffer
             }
 
-            if (this.opt.optTexture) {
+            if (this.opt.optimizeTexture) {
                 //this.buildTextureAtlases();
                 this.fixDupMaterials();
             }
 
+            if (this.opt.enableSceneOptimizer) {
+                this.sceneOptimizer.start();
+            }
         });
 
         this.createSkybox();
