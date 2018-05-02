@@ -45,11 +45,11 @@ class CityExplorerOptions implements ICityExplorerOptions {
 
 export class CityExplorerScene extends FirstScene implements EventListenerObject {
     private readonly opt = {
-        enableSceneOptimizer: false,
-        enableOctree: false,
         optimizeMeshes: true,
         freezeMeshes: true,
         disableAutoClear: true,
+        enableSceneOptimizer: false,
+        enableOctree: false,
         optimizeTexture: false,
         enableLOD: false
     };
@@ -237,7 +237,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     }
     
     protected createAssets(): void {
-        console.log('>>>> CityExplorerScene.createAssets');
+        //console.log('>>>> CityExplorerScene.createAssets');
 
         if (this.opt.enableSceneOptimizer) {
             this.initializeSceneOptimizer();
@@ -248,31 +248,33 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.light.shadowMinZ = 30;
         this.light.shadowMaxZ = 1000;
 
-        this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
-        this.shadowGenerator.setDarkness(0);
-        this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+        if (VkApp.instance.options.shadow !== ShadowType.None) {
+            this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
+            this.shadowGenerator.setDarkness(0);
+            this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+        }
 
-        if (VkApp.instance.options.shadow === ShadowType.Contact) {
+        if (VkApp.instance.options.shadow === ShadowType.PCSS) {
             this.shadowGenerator.useContactHardeningShadow = true;
-            this.shadowGenerator.bias = 0.0;
-            this.shadowGenerator.normalBias = 0.05;
-		    this.shadowGenerator.contactHardeningLightSizeUVRatio = 0.08;
-            //this.shadowGenerator.useBlurExponentialShadowMap = true;
-            //this.shadowGenerator.normalBias = 0.01;
+            //this.shadowGenerator.bias = 0.01;
+            //this.shadowGenerator.normalBias = 0.05;
+		    //this.shadowGenerator.contactHardeningLightSizeUVRatio = 0.08;
             //this.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
-            //this.shadowGenerator.useKernelBlur = true;
-            //this.shadowGenerator.blurKernel = 64;
+            console.log('using Contact Hardening Shadow');
         }
-        else if (VkApp.instance.options.shadow === ShadowType.Exponential) {
+        else if (VkApp.instance.options.shadow === ShadowType.BESM) {
             this.shadowGenerator.useBlurExponentialShadowMap = true;
+            console.log('using Blurred Exponential Shadow Map');
         }
-        else if (VkApp.instance.options.shadow === ShadowType.Close) {
+        else if (VkApp.instance.options.shadow === ShadowType.CESM) {
             this.shadowGenerator.useCloseExponentialShadowMap = true;
             this.shadowGenerator.useKernelBlur = true;
+            console.log('using Close Exponential Shadow Map');
         }
         else if (VkApp.instance.options.shadow === ShadowType.PCF) {
             this.shadowGenerator.usePercentageCloserFiltering = true;
             this.shadowGenerator.filteringQuality = BABYLON.ShadowGenerator.QUALITY_MEDIUM;
+            console.log('using Percentage Closer Filtering Shadow');
         }
 
         this.decalMaterial = new BABYLON.StandardMaterial("decalMat", this.scene);
@@ -281,8 +283,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.decalMaterial.zOffset = -2;
 
         //this.menu.createAssets();
-
-        console.log('<<<< CityExplorerScene.createAssets');
+        //console.log('<<<< CityExplorerScene.createAssets');
     }
 
     // EventListenerObject interface method
@@ -321,7 +322,9 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 	};
 
     private setLightsParams(color: BABYLON.Color3, dir: BABYLON.Vector3, intensity: number): void {
-        this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYTWOFRAMES;
+        if (this.shadowGenerator) {
+            this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYTWOFRAMES;
+        }
 
         this.light.intensity = intensity;
         this.light.direction = dir;
@@ -335,7 +338,9 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.hemiLight.groundColor = color.scale(0.5);
 
         setTimeout(() => {
-            this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+            if (this.shadowGenerator) {
+                this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
+            }
         }, 1000);
     }
 

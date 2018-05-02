@@ -14,13 +14,13 @@ export class VkException {
 }
 
 export enum ShadowType {
-    Contact, Exponential, Close, PCF, None
+    None, PCF, PCSS, BESM, CESM
 };
 
 export class VkAppOptions {
     readonly enableVR?:                 boolean = true;
     readonly debugLayer?:               boolean = false;
-    readonly shadow?:                   ShadowType = ShadowType.None;
+    readonly shadow?:                   ShadowType = ShadowType.PCF;
 }
 
 export enum TouchpadNav { None, Center, Top, Bottom, Left, Right };

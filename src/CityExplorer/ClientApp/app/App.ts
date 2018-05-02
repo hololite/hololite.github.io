@@ -14,14 +14,14 @@ function getUrlParam(name) {
 function getShadowType(shadow: string): ShadowType {
     let type: ShadowType = ShadowType.PCF;
 
-    if (shadow === 'contact') {
-        type = ShadowType.Contact;
+    if (shadow === 'pcss') {
+        type = ShadowType.PCSS;
     }
-    else if (shadow === 'expo') {
-        type = ShadowType.Exponential;
+    else if (shadow === 'besm') {
+        type = ShadowType.BESM;
     }
-    else if (shadow === 'close') {
-        type = ShadowType.Close;
+    else if (shadow === 'cesm') {
+        type = ShadowType.CESM;
     }
     else if (shadow === 'pcf') {
         type = ShadowType.PCF;
