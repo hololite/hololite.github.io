@@ -45,7 +45,8 @@ class CityExplorerOptions implements ICityExplorerOptions {
 
 export class CityExplorerScene extends FirstScene implements EventListenerObject {
     private readonly opt = {
-        enableSceneOptimizer: true,
+        enableSceneOptimizer: false,
+        enableOctree: false,
         optimizeMeshes: true,
         freezeMeshes: true,
         disableAutoClear: true,
@@ -206,8 +207,8 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             this.scene.freeActiveMeshes();
         }
 
-        if (this.opt.optimizeMeshes) {
-            //this.scene.createOrUpdateSelectionOctree();
+        if (this.opt.enableOctree) {
+            this.scene.createOrUpdateSelectionOctree();
         }
     }
 
@@ -244,7 +245,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
         this.hemiLight = new BABYLON.HemisphericLight("DirLight", new BABYLON.Vector3(0, 1, 0), this.scene);
         this.light = new BABYLON.DirectionalLight("DirLight", new BABYLON.Vector3(-1, 1, -1), this.scene);
-        this.light.shadowMinZ = 1;
+        this.light.shadowMinZ = 30;
         this.light.shadowMaxZ = 1000;
 
         this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
@@ -742,9 +743,11 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 //let root = this.scene.getMeshByName("RootNode");
                 //root.isVisible = false;
                 //console.log(`root mesh removed: index=${this.scene.removeMesh(root)}`);
-                // use oct tree
-                //this.scene.createOrUpdateSelectionOctree();
                 this.scene.freezeMaterials();
+            }
+
+            if (this.opt.enableOctree) {
+                this.scene.createOrUpdateSelectionOctree();
             }
 
             if (this.opt.disableAutoClear) {
