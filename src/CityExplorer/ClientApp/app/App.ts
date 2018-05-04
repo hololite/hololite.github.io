@@ -39,10 +39,16 @@ export class App extends VkApp {
         //let query = window.location.search.substring(1);
         let touch: boolean = (getUrlParam("touch") === "true");
         let debug: boolean = (getUrlParam("debug") === "true");
+        let sceneOpt: boolean = (getUrlParam("opt") === "true");
         let shadow: ShadowType = getShadowType(getUrlParam("shadow"));
-        console.log(`**** touch=[${touch}], debug=[${debug}], shadow=[${shadow}]`);
+        let speed: number = parseInt(getUrlParam("speed"));
+        if (isNaN(speed) || speed < 0 || speed > 50) {
+            speed = 5;
+        }
 
-        let options: VkAppOptions = { enableVR: !touch, debugLayer: debug, shadow: shadow };
+        console.log(`**** touch=[${touch}], debug=[${debug}], shadow=[${shadow}], sceneOpt=[${sceneOpt}], speed=[${speed}]`);
+
+        let options: VkAppOptions = { enableVR: !touch, debugLayer: debug, shadow: shadow, sceneOpt: sceneOpt, initialSpeed: speed };
         super(Common.canvasName, new Director(), options);
 	}
 

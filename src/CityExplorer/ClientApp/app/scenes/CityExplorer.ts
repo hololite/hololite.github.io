@@ -48,9 +48,9 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         optimizeMeshes: true,
         freezeMeshes: true,
         disableAutoClear: true,
-        enableSceneOptimizer: false,
+        enableSceneOptimizer: VkApp.instance.options.sceneOpt,
+        optimizeTexture: true,
         enableOctree: false,
-        optimizeTexture: false,
         enableLOD: false
     };
 
@@ -73,7 +73,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private loaderOptions: CityExplorerOptions = null;
     private skyboxMode: number = 0;
     private textureAtlas = new Collections.Dictionary<string, BABYLON.Texture>(); 
-    private speed = 5.0;  // units per sec 
+    private speed = VkApp.instance.options.initialSpeed;  // units per sec 
     private s1: BABYLON.SimplificationSettings = null;
     private s2: BABYLON.SimplificationSettings = null;
     private s3: BABYLON.SimplificationSettings = null;

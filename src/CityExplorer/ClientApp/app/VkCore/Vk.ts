@@ -20,6 +20,8 @@ export enum ShadowType {
 export class VkAppOptions {
     readonly enableVR?:                 boolean = true;
     readonly debugLayer?:               boolean = false;
+    readonly sceneOpt?:                 boolean = false;
+    readonly initialSpeed?:             number = 5;
     readonly shadow?:                   ShadowType = ShadowType.PCF;
 }
 
@@ -260,6 +262,17 @@ export class VkApp {
                     controller.onMenuButtonStateChangedObservable.add((eventData: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
                         this.menuButtonObserver(controller, eventState);
                     });
+
+                    controller.onPadValuesChangedObservable.add((stickValue: BABYLON.StickValues, eventState: BABYLON.EventState) => {
+                        this.padValueObserver(stickValue, eventState);
+                    });
+
+                    controller.onPadStateChangedObservable.add((gamepadButton: BABYLON.ExtendedGamepadButton, eventState: BABYLON.EventState) => {
+                        this.padButtonObserver(gamepadButton, eventState);
+                    });
+                }
+                else if (c instanceof BABYLON.GearVRController) {
+                    let controller = <BABYLON.GearVRController>c;
 
                     controller.onPadValuesChangedObservable.add((stickValue: BABYLON.StickValues, eventState: BABYLON.EventState) => {
                         this.padValueObserver(stickValue, eventState);
