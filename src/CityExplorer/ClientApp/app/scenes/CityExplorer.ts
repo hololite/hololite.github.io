@@ -50,7 +50,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         disableAutoClear: true,
         enableSceneOptimizer: VkApp.instance.options.sceneOpt,
         optimizeTexture: true,
-        enableOctree: false,
+        enableOctree: VkApp.instance.options.octTree,
         enableLOD: false
     };
 
@@ -530,6 +530,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         textureMap.forEach((texture: string, materialInfo: MaterialInfo) => {
             //console.log(`**** texture=${texture}`);
             //console.log(`    main-mat=${materialInfo.main.name}`);
+
+            // freeze the main (non-dup) material
+            materialInfo.main.freeze();
+            materialInfo.main.needDepthPrePass = true;
 
             materialInfo.dups.forEach((name: string, sm: BABYLON.StandardMaterial) => {
                 //console.log(`    dup-mat=${sm.name}, dup-texture=${sm.diffuseTexture.name}`);

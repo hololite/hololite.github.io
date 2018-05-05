@@ -21,6 +21,7 @@ export class VkAppOptions {
     readonly enableVR?:                 boolean = true;
     readonly debugLayer?:               boolean = false;
     readonly sceneOpt?:                 boolean = false;
+    readonly octTree?:                  boolean = false;
     readonly initialSpeed?:             number = 5;
     readonly shadow?:                   ShadowType = ShadowType.PCF;
 }
