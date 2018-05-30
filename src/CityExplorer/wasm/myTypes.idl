@@ -1,0 +1,50 @@
+//
+// Table is an abstract class
+//
+interface Table {
+	//void Table();         don't define the ctor of abstract class!
+
+	//
+	// Public member of Table
+	//
+	void setData(long i);
+};
+
+//
+//	MyTable is an implementation-class of Table in js space
+//	MyTable is not defined in myTypes.h 
+//
+[JSImplementation="Table"]
+interface MyTable {
+	void MyTable();			// must define ctor of implementation class
+
+	//
+	//	Implementation of (pure) protected virtual functions of Table
+	//
+	void onSetData(long i); 
+};
+
+interface Vector {
+	void Vector(long x, long y, long z);			// Vector ctor
+	attribute long x;
+	attribute long y;
+	attribute long z;
+	[Value]Vector multiply(long m);
+};
+
+interface Foo {
+	void Foo(); // for ctor
+	long setVal(long v);
+	void setTable([Ref]Table table); // C++: void setTable(Table& table);
+	void setVector(Vector vector); // C++: void setVector(Vector* vector);
+	void setVectorRef([Ref]Vector vector); // C++: void setVector(Vector* vector);
+
+	static Foo createInstance();
+
+};
+
+interface Bar {
+	void Bar(long val);
+	long getVal();
+	Foo makeFoo();			// C++: Foo* makeFoo();
+};
