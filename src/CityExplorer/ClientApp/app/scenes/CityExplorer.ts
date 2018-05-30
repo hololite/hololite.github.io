@@ -10,6 +10,7 @@ import 'oimo';
 import { Common } from './../VkCore/Common'
 import { VkApp, VkScene, TouchpadNav, FirstScene, ShadowType } from './../VkCore/Vk'
 import { VkMenu } from './../VkCore/VkMenu'
+import { VkTypes, VkTable } from './../VkTypes'
 import * as Collections from 'typescript-collections'
 
 export interface ICityExplorerOptions {
@@ -82,6 +83,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     private movingMode = true;
     private loadingStep = 0;
     private sceneOptimizer: BABYLON.SceneOptimizer = null;
+    private vkTypes: VkTypes = null;
 
     /*
     * Public members
@@ -647,6 +649,9 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     }
 
     protected onStart(): void {
+        this.vkTypes = new VkTypes();
+        let vkTable = new VkTable();
+        vkTable.setData(777888);
 
         /*
         let black =  BABYLON.Color3.Black();

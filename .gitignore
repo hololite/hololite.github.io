@@ -1,2 +1,11 @@
 *.user
 src/VkCore/Properties/launchSettings.json
+src/CityExplorer/wasm/widlBinder.js
+src/CityExplorer/wasm/parser.out
+src/CityExplorer/wasm/WebIDLGrammar.pkl
+src/CityExplorer/wasm/VkTypes.wasm
+src/CityExplorer/wasm/VkTypes.js
+src/CityExplorer/ClientApp/VkTypes.wasm
+src/CityExplorer/ClientApp/VkTypes.js
+src/CityExplorer/wasm/widlBinder.cpp
+src/CityExplorer/wasm/VkTypes.html
