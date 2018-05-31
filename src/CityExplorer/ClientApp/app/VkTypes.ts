@@ -1,8 +1,10 @@
 import { Common } from './VkCore/Common'
 import { VkApp, IVkDirector, VkScene, EndScene } from './VkCore/Vk'
 
+//
 // declare js types defined in mytypes.js
-declare var Module: any;
+//
+declare function createVkModule(): any;
 
 export class VkTable {
     private myTable: any = null;
@@ -12,9 +14,9 @@ export class VkTable {
         console.log(`**** VkTable.onSetData: x=${this.x}, i=${i}`);
     }
 
-    public constructor() {
+    public constructor(vkModule: any) {
         console.log('>>>> VkTable.constructor');
-        this.myTable = new Module.MyTable();
+        this.myTable = new vkModule.MyTable();
         this.myTable.onSetData = (i: number) => { this.onSetData(i); };
         this.x = 100;
         console.log('<<<< VkTable.constructor');
@@ -27,11 +29,12 @@ export class VkTable {
 
 export class VkTypes {
     private moduleInitialized = false;
+    private vkModule: any = null;
 
     public constructor() {
         console.log('>>>> VkTypes.constructor');
-
-        Module.onRuntimeInitialized = () => {
+        this.vkModule = createVkModule();
+        this.vkModule.onRuntimeInitialized = () => {
             this.moduleInitialized = true;
             console.log('*** EM Module is initialized!!!')
             this.test();
@@ -41,10 +44,10 @@ export class VkTypes {
     }
 
     private test(): void {
-        let vkTable: VkTable = new VkTable();
+        let vkTable: VkTable = new VkTable(this.vkModule);
         vkTable.setData(888);
 
-        var vector = new Module.Vector(100, 101, 102);
+        var vector = new this.vkModule.Vector(100, 101, 102);
         console.log('vector.x=' + vector.get_x());
         vector.set_y(7);
         vector.set_z(8);
@@ -53,9 +56,9 @@ export class VkTypes {
         console.log('v2.y=' + v2.get_y());
         console.log('v2.z=' + v2.get_z());
 
-        var f = Module.Foo.prototype.createInstance();
+        var f = this.vkModule.Foo.prototype.createInstance();
 
-        var bar = new Module.Bar(777);
+        var bar = new this.vkModule.Bar(777);
         var foo = bar.makeFoo(); 
 
         foo.setVectorRef(vector);
@@ -63,7 +66,7 @@ export class VkTypes {
         var val = bar.getVal();
         console.log(val);
 
-        Module.destroy(foo);
-        Module.destroy(bar);
+        this.vkModule.destroy(foo);
+        this.vkModule.destroy(bar);
     }
 }

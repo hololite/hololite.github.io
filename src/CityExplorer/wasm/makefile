@@ -37,6 +37,7 @@ $(VK_TYPES).wasm $(VK_TYPES).js $(VK_TYPES).html: $(WIDL_BINDER).cpp $(WIDL_BIND
 	emcc -O3 -o $(VK_TYPES).html $(VK_TYPES).cpp _$(WIDL_BINDER).cpp \
 	-s WASM=1 -std=c++11 --shell-file $(TEMPLATE_INDEX_HTML) -s NO_EXIT_RUNTIME=1 \
 	-s EXTRA_EXPORTED_RUNTIME_METHODS=$(EXTRA_EXPORTED_RUNTIME_METHODS) \
+	-s MODULARIZE=1 -s EXPORT_NAME="'createVkModule'" \
 	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) --post-js $(WIDL_BINDER).js
 
 clear:
