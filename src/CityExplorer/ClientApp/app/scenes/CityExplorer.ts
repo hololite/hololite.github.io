@@ -441,7 +441,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         let atlasConfig: AtlasConfig = JSON.parse(request.responseText);
         let aw: number = atlasConfig.meta.size.w;
         let ah: number = atlasConfig.meta.size.h;
-        console.log(`**** atlas: aw=${aw}, ah=${ah}`);
+        //console.log(`**** atlas: aw=${aw}, ah=${ah}`);
 
         let roofAtlas = new BABYLON.Texture(atlasFile, this.scene, false, true);
         roofAtlas.hasAlpha = true;
@@ -548,10 +548,10 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         // iterate unique textures and correponding materials
         let uniqueCount = 0;
         textureMap.forEach((textureName: string, materialInfo: MaterialInfo) => {
-            console.log(`**** unique texture=${textureName}, material=${materialInfo.main.name}`);
+            //console.log(`**** unique texture=${textureName}, material=${materialInfo.main.name}`);
             let texture = this.textureAtlas.getValue(textureName); // texture from atlas
             if (texture) {
-                console.log(`**** replacing texture=${materialInfo.main.diffuseTexture.name} with atlasTexture=${texture.name}`);
+                //console.log(`**** replacing texture=${materialInfo.main.diffuseTexture.name} with atlasTexture=${texture.name}`);
                 materialInfo.main.diffuseTexture.dispose();
                 materialInfo.main.diffuseTexture = texture;
             }
@@ -650,8 +650,6 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
     protected onStart(): void {
         this.vkTypes = new VkTypes();
-        let vkTable = new VkTable();
-        vkTable.setData(777888);
 
         /*
         let black =  BABYLON.Color3.Black();

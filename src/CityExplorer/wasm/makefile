@@ -34,7 +34,10 @@ $(WIDL_BINDER).cpp $(WIDL_BINDER).js: $(VK_TYPES).idl
 # emcc -O3 -o myFunct.html myFunct.c  -s WASM=1 --shell-file template_index.html -s NO_EXIT_RUNTIME=1  -s ALLOW_MEMORY_GROWTH=1   -s EXTRA_EXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']" -s EXPORTED_FUNCTIONS="['_malloc', '_free']"
 
 $(VK_TYPES).wasm $(VK_TYPES).js $(VK_TYPES).html: $(WIDL_BINDER).cpp $(WIDL_BINDER).js $(VK_TYPES).h $(VK_TYPES).cpp _$(WIDL_BINDER).cpp $(TEMPLATE_INDEX_HTML)
-	emcc -O3 -o $(VK_TYPES).html $(VK_TYPES).cpp _$(WIDL_BINDER).cpp -s WASM=1 -std=c++11 --shell-file $(TEMPLATE_INDEX_HTML) -s NO_EXIT_RUNTIME=1 -s EXTRA_EXPORTED_RUNTIME_METHODS=$(EXTRA_EXPORTED_RUNTIME_METHODS) -s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) --post-js $(WIDL_BINDER).js
+	emcc -O3 -o $(VK_TYPES).html $(VK_TYPES).cpp _$(WIDL_BINDER).cpp \
+	-s WASM=1 -std=c++11 --shell-file $(TEMPLATE_INDEX_HTML) -s NO_EXIT_RUNTIME=1 \
+	-s EXTRA_EXPORTED_RUNTIME_METHODS=$(EXTRA_EXPORTED_RUNTIME_METHODS) \
+	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) --post-js $(WIDL_BINDER).js
 
 clear:
 	-rm -f $(WIDL_OUTPUTS) $(EMCC_OUTPUTS) $(TARGETS)
