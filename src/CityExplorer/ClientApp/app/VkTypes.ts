@@ -1,6 +1,7 @@
 import { Common } from './VkCore/Common'
 import { VkApp, IVkDirector, VkScene, EndScene } from './VkCore/Vk'
 import * as createVkModule from './../../ClientApp/VkTypes.js'
+import { setTimeout } from 'timers';
 
 export class VkTable {
     private myTable: any = null;
@@ -24,19 +25,32 @@ export class VkTable {
 }
 
 export class VkTypes {
-    private moduleInitialized = false;
     private vkModule: any = null;
 
     public constructor() {
         console.log('>>>> VkTypes.constructor');
-        this.vkModule = createVkModule();
-        this.vkModule.onRuntimeInitialized = () => {
-            this.moduleInitialized = true;
-            console.log('*** EM Module is initialized!!!')
-            this.test();
-        }
+
+        createVkModule().then(
+            (module) => {
+                console.log('**** createVkModule completed');
+                this.vkModule = module;
+            }
+        );
+
+        this.runTest();
 
         console.log('<<<< VkTypes.constructor');
+    }
+
+    private runTest(): void {
+        console.log('**** VkTypes.runTest');
+
+        if (this.vkModule) {
+            this.test();
+        }
+        else {
+            setTimeout(() => { this.runTest(); }, 1000);
+        }
     }
 
     private test(): void {
