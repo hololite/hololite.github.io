@@ -1,7 +1,6 @@
 import { Common } from './VkCore/Common'
 import { VkApp, IVkDirector, VkScene, EndScene } from './VkCore/Vk'
 import * as createVkModule from './../../ClientApp/VkTypes.js'
-import { setTimeout } from 'timers';
 
 export class VkTable {
     private myTable: any = null;
