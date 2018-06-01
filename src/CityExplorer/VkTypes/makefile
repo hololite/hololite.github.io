@@ -40,5 +40,5 @@ $(VK_TYPES).wasm $(VK_TYPES).js $(VK_TYPES).html: $(WIDL_BINDER).cpp $(WIDL_BIND
 	-s MODULARIZE=1 -s EXPORT_NAME="'createVkModule'" \
 	-s EXPORTED_FUNCTIONS=$(EXPORTED_FUNCTIONS) --post-js $(WIDL_BINDER).js
 
-clear:
+clean:
 	-rm -f $(WIDL_OUTPUTS) $(EMCC_OUTPUTS) $(TARGETS)
