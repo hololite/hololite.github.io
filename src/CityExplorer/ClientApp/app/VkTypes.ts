@@ -1,10 +1,6 @@
 import { Common } from './VkCore/Common'
 import { VkApp, IVkDirector, VkScene, EndScene } from './VkCore/Vk'
-
-//
-// declare js types defined in mytypes.js
-//
-declare function createVkModule(): any;
+import * as createVkModule from './../../ClientApp/VkTypes.js'
 
 export class VkTable {
     private myTable: any = null;

@@ -10,7 +10,6 @@
       "assets": [
         "assets",
         "favicon.ico",
-		"VkTypes.js",
 		"VkTypes.wasm"
       ],
       "index": "index.html",

@@ -6,6 +6,7 @@
     "sourceMap": true,
     "mapRoot": "wwwroot",
     "declaration": false,
+    "allowJs": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
