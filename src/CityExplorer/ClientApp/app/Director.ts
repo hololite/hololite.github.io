@@ -41,8 +41,8 @@ export class Director implements IVkDirector {
 
     public start(): void {
         this.cityExplorerScene = new CityExplorerScene(
-            "assets/scenes/babylonjs/city/",
-            "HugeCity.babylon",
+            "assets/scenes/glb/",
+            "HugeCity.glb",
             new BABYLON.Vector3(0, 100, -300),
             new BABYLON.Vector3(0, 100, 0),
             {

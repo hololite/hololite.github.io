@@ -50,7 +50,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         freezeMeshes: true,
         disableAutoClear: true,
         enableSceneOptimizer: VkApp.instance.options.sceneOpt,
-        optimizeTexture: true,
+        optimizeTexture: false,
         enableOctree: VkApp.instance.options.octTree,
         enableLOD: false
     };
@@ -245,7 +245,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             this.initializeSceneOptimizer();
         }
 
-        this.hemiLight = new BABYLON.HemisphericLight("DirLight", new BABYLON.Vector3(0, 1, 0), this.scene);
+        this.hemiLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
         this.light = new BABYLON.DirectionalLight("DirLight", new BABYLON.Vector3(-1, 1, -1), this.scene);
         this.light.shadowMinZ = 30;
         this.light.shadowMaxZ = 1000;
@@ -328,13 +328,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYTWOFRAMES;
         }
 
+
         this.light.intensity = intensity;
         this.light.direction = dir;
         this.light.diffuse = color;
         this.light.specular = color.scale(0.7);
 
         this.hemiLight.intensity = intensity/2.5;
-        this.hemiLight.direction = dir.scale(-1.0);
+        this.hemiLight.direction = dir; //.scale(-1.0);
         this.hemiLight.diffuse = color;
         this.hemiLight.specular = color.scale(0.6);
         this.hemiLight.groundColor = color.scale(0.5);
@@ -371,7 +372,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             case 3:
                 // noon
-                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 2.0);
+                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 5.0);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
                 //console.log(`luminance=${this.skyboxMaterial.luminance}`);
                 timeout = 120000;
@@ -649,7 +650,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
     }
 
     protected onStart(): void {
-        this.vkTypes = new VkTypes();
+        //this.vkTypes = new VkTypes();
 
         /*
         let black =  BABYLON.Color3.Black();
@@ -729,6 +730,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     }
                 }
 
+                /*
                 if (VkApp.instance.options.shadow !== ShadowType.None) {
                     m.receiveShadows = true;
                     if (m.name.startsWith("Facade") || m.name.startsWith("Roof") || m.name.startsWith("FlatRoo")) {
@@ -738,6 +740,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                 else {
                     m.receiveShadows = false;
                 }
+                */
 
                 /* 
                 if (this.loaderOptions.scale !== 1) {
