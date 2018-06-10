@@ -11,6 +11,7 @@ import { Common } from './../VkCore/Common'
 import { VkApp, VkScene, TouchpadNav, FirstScene, ShadowType } from './../VkCore/Vk'
 import { VkMenu } from './../VkCore/VkMenu'
 import { VkTypes, VkTable } from './../VkTypes'
+import { CityMaterials } from './../CityMaterials'
 import * as Collections from 'typescript-collections'
 
 export interface ICityExplorerOptions {
@@ -335,7 +336,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         this.light.specular = color.scale(0.7);
 
         this.hemiLight.intensity = intensity/2.5;
-        this.hemiLight.direction = dir; //.scale(-1.0);
+        this.hemiLight.direction = dir.scale(-1.0);
         this.hemiLight.diffuse = color;
         this.hemiLight.specular = color.scale(0.6);
         this.hemiLight.groundColor = color.scale(0.5);
@@ -372,7 +373,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             case 3:
                 // noon
-                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 5.0);
+                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 3.0);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
                 //console.log(`luminance=${this.skyboxMaterial.luminance}`);
                 timeout = 120000;
@@ -704,6 +705,9 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             else {
                 console.log('cannot find default light');
             }
+
+            let cm = CityMaterials.instance;
+            cm.fixPBRMaterials(this.scene.materials);
 
             for (let am of this.meshes) {
                 let m = <BABYLON.Mesh>am;
