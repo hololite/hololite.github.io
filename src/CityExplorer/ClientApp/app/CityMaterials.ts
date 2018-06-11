@@ -11,6 +11,140 @@ enum TextureType {
 export class CityMaterials {
     private static _instance: CityMaterials = null;
 
+
+    private constructor() {
+        this.buildMap();
+	}
+
+    private buildMap(): void {
+        console.log(`map: length=${this.map.length}`);
+        console.log(`map: val=${this.map[0]}`);
+        console.log(`map: val=${this.map[10]}`);
+    }
+
+    private getTextureType(material: BABYLON.Material): TextureType {
+        let textureType: TextureType = TextureType.Unknown;
+
+        if (material) {
+            let materialName = material.name;
+            if (materialName.length > 9) {
+                let num = materialName.substr(9);
+                let idx = Number.parseInt(num);
+                if (!Number.isNaN(idx)) {
+                    if (idx >= 0 || idx < this.map.length) {
+                        textureType = this.map[idx];
+                    }
+                }
+            }
+        }
+
+        return textureType;
+    }
+
+    public genShadow(material: BABYLON.Material): boolean {
+        let textureType = this.getTextureType(material);
+        let val: boolean;
+
+        switch (textureType) {
+            case TextureType.Unknown:
+            case TextureType.Street:
+            case TextureType.Pavement:
+            case TextureType.Parking:
+            case TextureType.Yard:
+                val = false;
+                break;
+
+            default:
+                val = true;
+        }
+
+        //if (textureType !== TextureType.Unknown)
+        //   console.log(`**** genShadow: name=${material.name}, val=${val}`);
+        return val;
+    }
+
+    private getRoughness(textureType: TextureType): number {
+        let val = 0.5;  //default
+
+        switch (textureType) {
+            case TextureType.RoofTop:
+            case TextureType.FlatTop:
+            case TextureType.Street:
+            case TextureType.Parking:
+            case TextureType.Pavement:
+            case TextureType.Yard:
+                val = 1.0;
+                break;
+
+            case TextureType.Glasses:
+                val = 0.0;
+                break;
+
+            case TextureType.Unknown:
+                val = 0.5;
+                break;
+
+            default:
+                val = 0.5;
+        }
+
+        return val;
+    }
+
+    private getMetallic(textureType: TextureType): number {
+        let val = 0.5;  //default
+
+        switch (textureType) {
+            case TextureType.RoofTop:
+            case TextureType.FlatTop:
+            case TextureType.Street:
+            case TextureType.Parking:
+            case TextureType.Pavement:
+                val = 0.2;
+                break;
+
+            case TextureType.Yard:
+                val = 0.0;
+                break;
+
+            case TextureType.Glasses:
+                val = 1.0;
+                break;
+
+            case TextureType.Unknown:
+                val = 0.5;
+                break;
+
+            default:
+                val = 0.5;
+        }
+
+        return val;
+    }
+
+    public static get instance(): CityMaterials {
+        if (!CityMaterials._instance) {
+			CityMaterials._instance = new CityMaterials();
+        }
+        return CityMaterials._instance;
+    }
+
+    public fixPBRMaterials(materials: BABYLON.Material[]): void {
+        let matNo = 0;
+        for (let material of materials) {
+            //console.log(`**** MaterialType: ${material.getClassName()}`);
+            if (material instanceof BABYLON.PBRMaterial) {
+                let txt = material.albedoTexture ? material.albedoTexture.name : "none";
+                //console.log(`**** PBRMaterial: no=${matNo++}, name=${material.name}, baseTexture=${txt}, baseColor=${material.albedoColor.toString()}, metallic=${material.metallic}, roughness=${material.roughness}`);
+                material.metallic = 0.9;
+                material.roughness = 0.5;
+            }
+            else {
+                console.warn('**** non-PBR material');
+            }
+        }
+    }
+
     private map : Array<TextureType> = new Array(
         //0
         TextureType.Glasses,
@@ -180,120 +314,167 @@ export class CityMaterials {
 
         //80
         TextureType.RoofTop,
+        //81
+        TextureType.Yard,
+        //82
+        TextureType.RoofTop,
+        //83
+        TextureType.Yard,
+        //84
+        TextureType.Yard,
+        //85
+        TextureType.Yard,
+        //86
+        TextureType.Yard,
+        //87
+        TextureType.RoofTop,
+        //88
+        TextureType.Parking,
+        //89
+        TextureType.RoofTop,
 
+        //90
+        TextureType.Yard,
+        //91
+        TextureType.RoofTop,
+        //92
+        TextureType.RoofTop,
+        //93
+        TextureType.RoofTop,
+        //94
+        TextureType.Yard,
+        //95
+        TextureType.Yard,
+        //96
+        TextureType.RoofTop,
+        //97
+        TextureType.Glasses,
+        //98
+        TextureType.Parking,
+        //99
+        TextureType.Facade,
+
+        //100
+        TextureType.RoofTop,
+        //101
+        TextureType.RoofTop,
+        //102
+        TextureType.RoofTop,
+        //103
+        TextureType.RoofTop,
+        //104
+        TextureType.RoofTop,
+        //105
+        TextureType.RoofTop,
+        //106
+        TextureType.RoofTop,
+        //107
+        TextureType.RoofTop,
+        //108
+        TextureType.Facade,
+        //109
+        TextureType.Facade,
+
+        //110
+        TextureType.Facade,
+        //111
+        TextureType.Street,
+        //112
+        TextureType.Parking,
+        //113
+        TextureType.Parking,
+        //114
+        TextureType.Yard,
+        //115
+        TextureType.Yard,
+        //116
+        TextureType.Parking,
+        //117
+        TextureType.RoofTop,
+        //118
+        TextureType.RoofTop,
+        //119
+        TextureType.RoofTop,
+
+        //120
+        TextureType.RoofTop,
+        //121
+        TextureType.RoofTop,
+        //122
+        TextureType.Facade,
+        //123
+        TextureType.RoofTop,
+        //124
+        TextureType.Yard,
+        //125
+        TextureType.RoofTop,
+        //126
+        TextureType.Parking,
+        //127
+        TextureType.RoofTop,
+        //128
+        TextureType.Parking,
+        //129
+        TextureType.RoofTop,
+
+        //130
+        TextureType.RoofTop,
+        //131
+        TextureType.RoofTop,
+        //132
+        TextureType.RoofTop,
+        //133
+        TextureType.RoofTop,
+        //134
+        TextureType.RoofTop,
+        //135
+        TextureType.RoofTop,
+        //136
+        TextureType.Facade,
+        //137
+        TextureType.RoofTop,
+        //138
+        TextureType.RoofTop,
+        //139
+        TextureType.Yard,
+
+        //140
+        TextureType.Parking,
+        //141
+        TextureType.Yard,
+        //142
+        TextureType.Street,
+        //143
+        TextureType.Street,
+        //144
+        TextureType.Street,
+        //145
+        TextureType.RoofTop,
+        //146
+        TextureType.RoofTop,
+        //147
+        TextureType.RoofTop,
+        //148
+        TextureType.RoofTop,
+        //149
+        TextureType.Parking,
+
+        //150
+        TextureType.Yard,
+        //151
+        TextureType.Parking,
+        //152
+        TextureType.Parking,
+        //153
+        TextureType.Street,
+        //154
+        TextureType.Street,
+        //155
+        TextureType.Street,
+        //155
+        TextureType.Street,
         //157
         TextureType.Street
     );
-
-    private constructor() {
-        this.buildMap();
-	}
-
-    private buildMap(): void {
-        console.log(`map: length=${this.map.length}`);
-        console.log(`map: val=${this.map[0]}`);
-        console.log(`map: val=${this.map[10]}`);
-    }
-
-    private genShadow(textureType: TextureType): boolean {
-        let val: boolean;
-
-        switch (textureType) {
-            case TextureType.Unknown:
-            case TextureType.Street:
-            case TextureType.Pavement:
-            case TextureType.Parking:
-            case TextureType.Yard:
-                val = false;
-                break;
-
-            default:
-                val = true;
-        }
-
-        return val;
-    }
-
-    private getRoughness(textureType: TextureType): number {
-        let val = 0.5;  //default
-
-        switch (textureType) {
-            case TextureType.RoofTop:
-            case TextureType.FlatTop:
-            case TextureType.Street:
-            case TextureType.Parking:
-            case TextureType.Pavement:
-            case TextureType.Yard:
-                val = 1.0;
-                break;
-
-            case TextureType.Glasses:
-                val = 0.0;
-                break;
-
-            case TextureType.Unknown:
-                val = 0.5;
-                break;
-
-            default:
-                val = 0.5;
-        }
-
-        return val;
-    }
-
-    private getMetallic(textureType: TextureType): number {
-        let val = 0.5;  //default
-
-        switch (textureType) {
-            case TextureType.RoofTop:
-            case TextureType.FlatTop:
-            case TextureType.Street:
-            case TextureType.Parking:
-            case TextureType.Pavement:
-                val = 0.2;
-                break;
-
-            case TextureType.Yard:
-                val = 0.0;
-                break;
-
-            case TextureType.Glasses:
-                val = 1.0;
-                break;
-
-            case TextureType.Unknown:
-                val = 0.5;
-                break;
-
-            default:
-                val = 0.5;
-        }
-
-        return val;
-    }
-
-    public static get instance(): CityMaterials {
-        if (!CityMaterials._instance) {
-			CityMaterials._instance = new CityMaterials();
-        }
-        return CityMaterials._instance;
-    }
-
-    public fixPBRMaterials(materials: BABYLON.Material[]): void {
-        let matNo = 0;
-        for (let material of materials) {
-            console.log(`**** MaterialType: ${material.getClassName()}`);
-            if (material instanceof BABYLON.PBRMaterial) {
-                let txt = material.albedoTexture ? material.albedoTexture.name : "none";
-                console.log(`**** PBRMaterial: no=${matNo++}, name=${material.name}, baseTexture=${txt}, baseColor=${material.albedoColor.toString()}, metallic=${material.metallic}, roughness=${material.roughness}`);
-                material.metallic = 0.9;
-                material.roughness = 0.5;
-            }
-            else {
-                console.warn('**** non-PBR material');
-            }
-        }
-    }
 }
 

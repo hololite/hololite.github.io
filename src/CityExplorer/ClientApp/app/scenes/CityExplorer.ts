@@ -734,17 +734,15 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
                     }
                 }
 
-                /*
                 if (VkApp.instance.options.shadow !== ShadowType.None) {
                     m.receiveShadows = true;
-                    if (m.name.startsWith("Facade") || m.name.startsWith("Roof") || m.name.startsWith("FlatRoo")) {
+                    if (cm.genShadow(m.material)) {
                         this.shadowGenerator.addShadowCaster(m);
                     }
                 }
                 else {
                     m.receiveShadows = false;
                 }
-                */
 
                 /* 
                 if (this.loaderOptions.scale !== 1) {
