@@ -5,8 +5,18 @@ enum TextureType {
     Unknown,
     RoofTop, FlatTop,
     Street, Pavement, Yard, Parking,
-    Glasses, Facade, Wall
+    Glasses, Facade 
 };
+
+export class MetallicRoughnessFactors {
+    constructor(x: number, y: number) {
+        this.m = x;
+        this.r = y;
+    }
+
+    m: number;
+    r: number;
+}
 
 export class CityMaterials {
     private static _instance: CityMaterials = null;
@@ -63,63 +73,44 @@ export class CityMaterials {
         return val;
     }
 
-    private getRoughness(textureType: TextureType): number {
-        let val = 0.5;  //default
+    private getMetallicRoughnessFactors(material: BABYLON.Material): MetallicRoughnessFactors {
+        let textureType = this.getTextureType(material);
+        let mrf = new MetallicRoughnessFactors(0.5, 0.5);
 
         switch (textureType) {
-            case TextureType.RoofTop:
-            case TextureType.FlatTop:
             case TextureType.Street:
-            case TextureType.Parking:
             case TextureType.Pavement:
-            case TextureType.Yard:
-                val = 1.0;
-                break;
-
-            case TextureType.Glasses:
-                val = 0.0;
-                break;
-
-            case TextureType.Unknown:
-                val = 0.5;
-                break;
-
-            default:
-                val = 0.5;
-        }
-
-        return val;
-    }
-
-    private getMetallic(textureType: TextureType): number {
-        let val = 0.5;  //default
-
-        switch (textureType) {
-            case TextureType.RoofTop:
-            case TextureType.FlatTop:
-            case TextureType.Street:
             case TextureType.Parking:
-            case TextureType.Pavement:
-                val = 0.2;
+                mrf.m = 0.2;
+                mrf.r = 0.5
                 break;
 
             case TextureType.Yard:
-                val = 0.0;
+                mrf.m = 0.0;
+                mrf.r = 1.0
+                break;
+
+            case TextureType.RoofTop:
+            case TextureType.FlatTop:
+                mrf.m = 0.2;
+                mrf.r = 0.4
+                break;
+
+            case TextureType.Facade:
+                mrf.m = 0.3;
+                mrf.r = 0.8;
                 break;
 
             case TextureType.Glasses:
-                val = 1.0;
+                mrf.m = 0.9;
+                mrf.r = 0.5;
                 break;
 
             case TextureType.Unknown:
-                val = 0.5;
-                break;
-
             default:
-                val = 0.5;
         }
 
-        return val;
+        return mrf;
     }
 
     public static get instance(): CityMaterials {
@@ -136,8 +127,9 @@ export class CityMaterials {
             if (material instanceof BABYLON.PBRMaterial) {
                 let txt = material.albedoTexture ? material.albedoTexture.name : "none";
                 //console.log(`**** PBRMaterial: no=${matNo++}, name=${material.name}, baseTexture=${txt}, baseColor=${material.albedoColor.toString()}, metallic=${material.metallic}, roughness=${material.roughness}`);
-                material.metallic = 0.9;
-                material.roughness = 0.5;
+                let mrf = this.getMetallicRoughnessFactors(material);
+                material.metallic = mrf.m;
+                material.roughness = mrf.r;
             }
             else {
                 console.warn('**** non-PBR material');
@@ -187,6 +179,7 @@ export class CityMaterials {
         TextureType.Glasses,
         //19
         TextureType.FlatTop,
+
         //20
         TextureType.Street,
         //21
@@ -228,6 +221,7 @@ export class CityMaterials {
         TextureType.Yard,
         //39
         TextureType.Facade,
+
         //40
         TextureType.RoofTop,
         //41
@@ -471,7 +465,7 @@ export class CityMaterials {
         TextureType.Street,
         //155
         TextureType.Street,
-        //155
+        //156
         TextureType.Street,
         //157
         TextureType.Street
