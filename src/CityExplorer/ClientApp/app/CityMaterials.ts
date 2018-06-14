@@ -81,7 +81,7 @@ export class CityMaterials {
             case TextureType.Street:
             case TextureType.Pavement:
             case TextureType.Parking:
-                mrf.m = 0.2;
+                mrf.m = 0.3;
                 mrf.r = 0.5
                 break;
 
@@ -130,6 +130,8 @@ export class CityMaterials {
                 let mrf = this.getMetallicRoughnessFactors(material);
                 material.metallic = mrf.m;
                 material.roughness = mrf.r;
+
+                material.usePhysicalLightFalloff = true;
             }
             else {
                 console.warn('**** non-PBR material');

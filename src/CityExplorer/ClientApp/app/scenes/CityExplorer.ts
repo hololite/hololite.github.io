@@ -247,13 +247,18 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         }
 
         this.hemiLight = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), this.scene);
+        this.hemiLight.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINANCE;
+        this.hemiLight.radius = 22;
+
         this.light = new BABYLON.DirectionalLight("DirLight", new BABYLON.Vector3(-1, 1, -1), this.scene);
-        this.light.shadowMinZ = 30;
+        this.light.shadowMinZ = 0.1;
         this.light.shadowMaxZ = 1000;
+        this.light.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINANCE;
+        this.light.radius = 22;
 
         if (VkApp.instance.options.shadow !== ShadowType.None) {
             this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
-            this.shadowGenerator.setDarkness(0);
+            this.shadowGenerator.setDarkness(0.3);
             this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
         }
 
@@ -329,15 +334,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
             this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONEVERYTWOFRAMES;
         }
 
-
         this.light.intensity = intensity;
         this.light.direction = dir;
         this.light.diffuse = color;
         this.light.specular = color.scale(0.7);
 
-        this.hemiLight.intensity = intensity/2.5;
+        this.hemiLight.intensity = intensity/4.3;
         this.hemiLight.direction = dir.scale(-1.0);
-        this.hemiLight.diffuse = color;
+        this.hemiLight.diffuse = color.scale(0.8);
         this.hemiLight.specular = color.scale(0.6);
         this.hemiLight.groundColor = color.scale(0.5);
 
@@ -359,21 +363,21 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         switch (this.skyboxMode) {
             case 1:
                 // sunrise
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.5, 0.5), new BABYLON.Vector3(0.0, 0.2, 1.0), 0.5);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.5, 0.5), new BABYLON.Vector3(0.0, 0.2, 1.0), 0.2);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0.45); 
                 timeout = 30000;
                 break;
 
             case 2:
                 // morning
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, 1.0), 1.2);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.7, 0.7), new BABYLON.Vector3(0.0, 1.0, 1.0), 0.5);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0.3); 
                 timeout = 55000;
                 break;
 
             case 3:
                 // noon
-                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 3.0);
+                this.setLightsParams(new BABYLON.Color3(1.0, 1.0, 1.0), new BABYLON.Vector3(0.2, -0.1, 0.2), 1.0);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, 0); 
                 //console.log(`luminance=${this.skyboxMaterial.luminance}`);
                 timeout = 120000;
@@ -381,14 +385,14 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
             case 4:
                 // afternoon
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.6, 0.6), new BABYLON.Vector3(0.0, 1.0, -1.0), 1.2);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.6, 0.6), new BABYLON.Vector3(0.0, 1.0, -1.0), 0.5);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.3);
                 timeout = 55000;
                 break;
 
             case 5:
                 // sunset
-                this.setLightsParams(new BABYLON.Color3(1.0, 0.2, 0.2), new BABYLON.Vector3(0.0, 0.2, -1.0), 0.5);
+                this.setLightsParams(new BABYLON.Color3(1.0, 0.2, 0.2), new BABYLON.Vector3(0.0, 0.2, -1.0), 0.2);
                 this.setSkyboxSettings("material.inclination", this.skyboxMaterial.inclination, -0.5); 
                 timeout = 30000;
                 break;
