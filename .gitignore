@@ -1,7 +1,5 @@
 *.user
 src/VkCore/Properties/launchSettings.json
-src/CityExplorer/ClientApp/VkTypes.wasm
-src/CityExplorer/ClientApp/VkTypes.js
 src/CityExplorer/VkTypes/widlBinder.js
 src/CityExplorer/VkTypes/widlBinder.cpp
 src/CityExplorer/VkTypes/parser.out
