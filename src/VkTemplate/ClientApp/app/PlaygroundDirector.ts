@@ -241,6 +241,6 @@ export class PlaygroundDirector implements IVkDirector {
         //this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
-        this.setFirstScene(this.officeMallScene);
+        this.setFirstScene(this.motorScene);
     }
 }
