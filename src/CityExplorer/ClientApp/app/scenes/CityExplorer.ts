@@ -258,7 +258,7 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
 
         if (VkApp.instance.options.shadow !== ShadowType.None) {
             this.shadowGenerator = new BABYLON.ShadowGenerator(1024, this.light);
-            this.shadowGenerator.setDarkness(0.3);
+            this.shadowGenerator.setDarkness(0.2);
             this.shadowGenerator.getShadowMap().refreshRate = BABYLON.RenderTargetTexture.REFRESHRATE_RENDER_ONCE;
         }
 
