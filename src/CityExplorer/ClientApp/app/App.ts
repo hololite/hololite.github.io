@@ -44,7 +44,7 @@ export class App extends VkApp {
         let shadow: ShadowType = getShadowType(getUrlParam("shadow"));
         let speed: number = parseInt(getUrlParam("speed"));
         if (isNaN(speed) || speed < 0 || speed > 50) {
-            speed = 5;
+            speed = 10;
         }
 
         console.log(`**** touch=[${touch}], debug=[${debug}], shadow=[${shadow}], sceneOpt=[${sceneOpt}], octTree=[${oct}]speed=[${speed}]`);

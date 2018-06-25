@@ -22,7 +22,7 @@ export class VkAppOptions {
     readonly debugLayer?:               boolean = false;
     readonly sceneOpt?:                 boolean = false;
     readonly octTree?:                  boolean = false;
-    readonly initialSpeed?:             number = 5;
+    readonly initialSpeed?:             number = 10;
     readonly shadow?:                   ShadowType = ShadowType.PCF;
 }
 
