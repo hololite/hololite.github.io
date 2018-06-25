@@ -9,7 +9,7 @@ import { VkScene, FirstScene } from '../../../../VkCore/Vk'
 import { VkMenu } from '../../../../VkCore/VkMenu'
 
 export class LightScene extends VkScene {
-    private menu: VkMenu = new VkMenu(this);
+    //private menu: VkMenu = new VkMenu(this);
     private light: BABYLON.Light;
 
     constructor() {
@@ -19,9 +19,11 @@ export class LightScene extends VkScene {
         });
     }
 
+    /*
     protected onMenuButton(controller: BABYLON.WebVRController, pressed: boolean) {
         this.menu.handleMenuButton(controller, pressed);
     }
+    */
 
     private createPointLight(): BABYLON.Light {
         let light = new BABYLON.PointLight(
@@ -117,11 +119,11 @@ export class LightScene extends VkScene {
             console.log('non shadow light');
         }
 
-        this.menu.createAssets();
+        //this.menu.createAssets();
     }
 
     protected onStart(): void {
-        this.menu.start();
+        //this.menu.start();
     }
 
     protected onStop(): void {

@@ -21,6 +21,8 @@ import { FrameScene } from './Basic/Frame';
 import { TerrainScene } from './Basic/Terrain';
 import { Video360Scene } from './Basic/Video';
 import { CornellScene } from './Basic/Cornell';
+import { LightScene } from './Basic/Light';
+import { UI3D} from './Basic/UI3D';
 import { OfficeMallScene } from './scenes/OfficeMallScene';
 
 export class PlaygroundDirector implements IVkDirector {
@@ -38,7 +40,7 @@ export class PlaygroundDirector implements IVkDirector {
     private refraction2Scene: Refraction2Scene = null;
     private spsScene: SPSScene = null;
     private sps2Scene: SPS2Scene = null;
-    private polyhedraScene : PolyhedraScene = null;
+    private polyhedraScene: PolyhedraScene = null;
     private vlsScene: VLSScene = null;
     private vls2Scene: VLS2Scene = null;
     private meshLoaderScene: MeshLoaderScene = null;
@@ -241,6 +243,7 @@ export class PlaygroundDirector implements IVkDirector {
         //this.terrainScene = new TerrainScene(new BABYLON.Vector3(0, 10, -20), BABYLON.Vector3.Zero());
         //this.terrainScene.initialize();
 
-        this.setFirstScene(this.motorScene);
+        //this.setFirstScene(this.motorScene);
+        this.setFirstScene(new UI3D());
     }
 }
