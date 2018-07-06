@@ -687,10 +687,12 @@ export class CityExplorerScene extends FirstScene implements EventListenerObject
         // The first parameter can be used to specify which mesh to import. Here we import all meshes
         //BABYLON.SceneLoader.ImportMesh("", this.path, this.file, this.scene, (newMeshes) => {
         BABYLON.SceneLoader.LoadAssetContainer(this.path, this.file, this.scene, (container: BABYLON.AssetContainer) => {
+            /*
             console.log(`**** asset container: lights=${container.lights.length}, camera=${container.cameras.length}, geo=${container.geometries.length}
-                meshes=${container.meshes.length}, mat=${container.materials.length}, textr=${container.textures.length}, transnodes=${container.transformNodes.length}, shadowgen=${container.shadowGenerators.length},
+                meshes=${container.meshes.length}, mat=${container.materials.length}, textr=${container.textures.length}, transnodes=${container.transformNodes.length}, 
                 particles=${container.particleSystems.length}, morph=${container.morphTargetManagers.length}, animGroup=${container.animationGroups.length}, effectLayers=${container.effectLayers.length},
                 lens=${container.lensFlareSystems.length}, action=${container.actionManagers.length}, sounds=${container.sounds.length}, multi-mat=${container.multiMaterials.length}, anim=${container.animations.length}, skelt=${container.skeletons.length}`);
+            */
             this.meshes = container.meshes;
 
             if (this.opt.enableLOD) {

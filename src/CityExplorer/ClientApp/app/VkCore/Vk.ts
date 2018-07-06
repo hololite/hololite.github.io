@@ -411,9 +411,11 @@ export class VkApp {
             console.log('ps: %s', asset.name);
         }
 
+        /*
         for (let asset of this.scene._actionManagers) {
             console.log('actionManager: %s', asset.toString());
         }
+        */
 
         for (let asset of this.scene.lensFlareSystems) {
             console.log('lsf: %s', asset.toString());
@@ -701,7 +703,7 @@ export abstract class VkScene {
         this.scene.skeletons.length = 0;
         this.scene.animations.length = 0;
         this.scene.particleSystems.length = 0;
-        this.scene._actionManagers.length = 0;
+        //this.scene._actionManagers.length = 0;
         this.scene.lensFlareSystems.length = 0;
         this.scene.morphTargetManagers.length = 0;
         this.scene.multiMaterials.length = 0;
